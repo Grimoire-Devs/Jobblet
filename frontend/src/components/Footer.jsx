@@ -1,9 +1,9 @@
-"use client"
-import { useLanguage } from "../contexts/LanguageContext"
-import { Briefcase } from "lucide-react"
+"use client";
+import { useLanguage } from "../contexts/LanguageContext";
+import { Briefcase } from "lucide-react";
 
 const Footer = () => {
-  const { t } = useLanguage()
+  const { t } = useLanguage();
 
   return (
     <footer className="bg-gray-900 text-white">
@@ -16,8 +16,8 @@ const Footer = () => {
               <span className="text-xl font-bold">Jobblet</span>
             </div>
             <p className="text-gray-400 mb-4">
-              Connecting local communities through trusted gig work opportunities. Fast, fair, and focused on your
-              neighborhood.
+              Connecting local communities through trusted gig work
+              opportunities. Fast, fair, and focused on your neighborhood.
             </p>
           </div>
 
@@ -26,17 +26,26 @@ const Footer = () => {
             <h3 className="text-lg font-semibold mb-4">Quick Links</h3>
             <ul className="space-y-2">
               <li>
-                <a href="/jobs" className="text-gray-400 hover:text-white transition-colors">
+                <a
+                  href="/jobs"
+                  className="text-gray-400 hover:text-white transition-colors"
+                >
                   Find Work
                 </a>
               </li>
               <li>
-                <a href="/poster/jobs/new" className="text-gray-400 hover:text-white transition-colors">
+                <a
+                  href="/poster/jobs/new"
+                  className="text-gray-400 hover:text-white transition-colors"
+                >
                   Post a Job
                 </a>
               </li>
               <li>
-                <a href="/help" className="text-gray-400 hover:text-white transition-colors">
+                <a
+                  href="/help"
+                  className="text-gray-400 hover:text-white transition-colors"
+                >
                   Help Center
                 </a>
               </li>
@@ -48,17 +57,26 @@ const Footer = () => {
             <h3 className="text-lg font-semibold mb-4">Legal</h3>
             <ul className="space-y-2">
               <li>
-                <a href="/legal/terms" className="text-gray-400 hover:text-white transition-colors">
+                <a
+                  href="/legal/terms"
+                  className="text-gray-400 hover:text-white transition-colors"
+                >
                   Terms of Service
                 </a>
               </li>
               <li>
-                <a href="/legal/privacy" className="text-gray-400 hover:text-white transition-colors">
+                <a
+                  href="/legal/privacy"
+                  className="text-gray-400 hover:text-white transition-colors"
+                >
                   Privacy Policy
                 </a>
               </li>
               <li>
-                <a href="/legal/safety" className="text-gray-400 hover:text-white transition-colors">
+                <a
+                  href="/legal/safety"
+                  className="text-gray-400 hover:text-white transition-colors"
+                >
                   Safety Guidelines
                 </a>
               </li>
@@ -67,11 +85,13 @@ const Footer = () => {
         </div>
 
         <div className="border-t border-gray-800 mt-8 pt-8 text-center">
-          <p className="text-gray-400">© 2024 Jobblet. All rights reserved. Built for local communities.</p>
+          <p className="text-gray-400">
+            © 2025 Jobblet. All rights reserved. Built for local communities.
+          </p>
         </div>
       </div>
     </footer>
-  )
-}
+  );
+};
 
-export default Footer
+export default Footer;
