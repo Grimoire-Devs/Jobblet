@@ -4,9 +4,11 @@ import { useState } from "react"
 import { Link, useNavigate } from "react-router-dom"
 import { useLanguage } from "../contexts/LanguageContext"
 import { useAuth } from "../contexts/AuthContext"
+import LocationSelector from "../components/LocationSelector"
 import { User, Briefcase, Mail, Lock, Phone, Eye, EyeOff } from "lucide-react"
 
 const Signup = () => {
+  const [loc, setLoc] = useState(null);
   const { t } = useLanguage()
   const { signup } = useAuth()
   const navigate = useNavigate()
@@ -140,11 +142,10 @@ const Signup = () => {
                 <button
                   type="button"
                   onClick={() => handleChange({ target: { name: "role", value: "poster" } })}
-                  className={`flex flex-col items-center p-4 border-2 rounded-lg transition-colors ${
-                    formData.role === "poster"
-                      ? "border-blue-600 bg-blue-50 text-blue-600"
-                      : "border-gray-300 hover:border-gray-400"
-                  }`}
+                  className={`flex flex-col items-center p-4 border-2 rounded-lg transition-colors ${formData.role === "poster"
+                    ? "border-blue-600 bg-blue-50 text-blue-600"
+                    : "border-gray-300 hover:border-gray-400"
+                    }`}
                 >
                   <Briefcase className="h-6 w-6 mb-2" />
                   <span className="text-sm font-medium">{t("jobPoster")}</span>
@@ -152,11 +153,10 @@ const Signup = () => {
                 <button
                   type="button"
                   onClick={() => handleChange({ target: { name: "role", value: "worker" } })}
-                  className={`flex flex-col items-center p-4 border-2 rounded-lg transition-colors ${
-                    formData.role === "worker"
-                      ? "border-blue-600 bg-blue-50 text-blue-600"
-                      : "border-gray-300 hover:border-gray-400"
-                  }`}
+                  className={`flex flex-col items-center p-4 border-2 rounded-lg transition-colors ${formData.role === "worker"
+                    ? "border-blue-600 bg-blue-50 text-blue-600"
+                    : "border-gray-300 hover:border-gray-400"
+                    }`}
                 >
                   <User className="h-6 w-6 mb-2" />
                   <span className="text-sm font-medium">{t("gigWorker")}</span>
@@ -177,9 +177,8 @@ const Signup = () => {
                   type="text"
                   value={formData.fullName}
                   onChange={handleChange}
-                  className={`appearance-none block w-full px-3 py-2 pl-10 border rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 ${
-                    errors.fullName ? "border-red-300" : "border-gray-300"
-                  }`}
+                  className={`appearance-none block w-full px-3 py-2 pl-10 border rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 ${errors.fullName ? "border-red-300" : "border-gray-300"
+                    }`}
                   placeholder="Enter your full name"
                 />
                 <User className="h-5 w-5 text-gray-400 absolute left-3 top-2.5" />
@@ -199,16 +198,18 @@ const Signup = () => {
                   type="email"
                   value={formData.email}
                   onChange={handleChange}
-                  className={`appearance-none block w-full px-3 py-2 pl-10 border rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 ${
-                    errors.email ? "border-red-300" : "border-gray-300"
-                  }`}
+                  className={`appearance-none block w-full px-3 py-2 pl-10 border rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 ${errors.email ? "border-red-300" : "border-gray-300"
+                    }`}
                   placeholder="Enter your email"
                 />
                 <Mail className="h-5 w-5 text-gray-400 absolute left-3 top-2.5" />
               </div>
               {errors.email && <p className="mt-1 text-sm text-red-600">{errors.email}</p>}
             </div>
-
+            <div>
+              <LocationSelector value={loc} onChange={setLoc} required />
+              <button disabled={!loc} /* … */>Create account</button>
+            </div>
             {/* Phone */}
             <div>
               <label htmlFor="phone" className="block text-sm font-medium text-gray-700">
@@ -221,9 +222,8 @@ const Signup = () => {
                   type="tel"
                   value={formData.phone}
                   onChange={handleChange}
-                  className={`appearance-none block w-full px-3 py-2 pl-10 border rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 ${
-                    errors.phone ? "border-red-300" : "border-gray-300"
-                  }`}
+                  className={`appearance-none block w-full px-3 py-2 pl-10 border rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 ${errors.phone ? "border-red-300" : "border-gray-300"
+                    }`}
                   placeholder="Enter your phone number"
                 />
                 <Phone className="h-5 w-5 text-gray-400 absolute left-3 top-2.5" />
@@ -243,9 +243,8 @@ const Signup = () => {
                   type={showPassword ? "text" : "password"}
                   value={formData.password}
                   onChange={handleChange}
-                  className={`appearance-none block w-full px-3 py-2 pl-10 pr-10 border rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 ${
-                    errors.password ? "border-red-300" : "border-gray-300"
-                  }`}
+                  className={`appearance-none block w-full px-3 py-2 pl-10 pr-10 border rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 ${errors.password ? "border-red-300" : "border-gray-300"
+                    }`}
                   placeholder="Enter your password"
                 />
                 <Lock className="h-5 w-5 text-gray-400 absolute left-3 top-2.5" />
@@ -272,9 +271,8 @@ const Signup = () => {
                   type={showConfirmPassword ? "text" : "password"}
                   value={formData.confirmPassword}
                   onChange={handleChange}
-                  className={`appearance-none block w-full px-3 py-2 pl-10 pr-10 border rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 ${
-                    errors.confirmPassword ? "border-red-300" : "border-gray-300"
-                  }`}
+                  className={`appearance-none block w-full px-3 py-2 pl-10 pr-10 border rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 ${errors.confirmPassword ? "border-red-300" : "border-gray-300"
+                    }`}
                   placeholder="Confirm your password"
                 />
                 <Lock className="h-5 w-5 text-gray-400 absolute left-3 top-2.5" />
