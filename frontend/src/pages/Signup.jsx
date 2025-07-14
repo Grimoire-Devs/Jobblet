@@ -3,23 +3,29 @@
 import { useState } from "react"
 import { Link, useNavigate } from "react-router-dom"
 import { useLanguage } from "../contexts/LanguageContext"
-import { useAuth } from "../contexts/AuthContext"
 import LocationSelector from "../components/LocationSelector"
 import { User, Briefcase, Mail, Lock, Phone, Eye, EyeOff } from "lucide-react"
+import toast from "react-hot-toast"
+
+import { useSelector, useDispatch } from "react-redux";
+import { signup, selectBusy, selectError } from '../redux/slices/userSlice';
+import { useEffect } from "react"
 
 const Signup = () => {
   const [loc, setLoc] = useState(null);
+  const dispatch = useDispatch();
   const { t } = useLanguage()
-  const { signup } = useAuth()
+
   const navigate = useNavigate()
 
   const [formData, setFormData] = useState({
-    fullName: "",
+    name: "",
     email: "",
     phone: "",
     password: "",
     confirmPassword: "",
     role: "",
+    location: loc,
   })
   const [showPassword, setShowPassword] = useState(false)
   const [showConfirmPassword, setShowConfirmPassword] = useState(false)
@@ -44,8 +50,8 @@ const Signup = () => {
   const validateForm = () => {
     const newErrors = {}
 
-    if (!formData.fullName.trim()) {
-      newErrors.fullName = "Full name is required"
+    if (!formData.name.trim()) {
+      newErrors.name = "Full name is required"
     }
 
     if (!formData.email.trim()) {
@@ -75,6 +81,9 @@ const Signup = () => {
     if (!formData.role) {
       newErrors.role = "Please select your role"
     }
+    if (!location) {
+      newErrors.location = "Please select your location"
+    }
 
     return newErrors
   }
@@ -82,35 +91,32 @@ const Signup = () => {
   const handleSubmit = async (e) => {
     e.preventDefault()
     const newErrors = validateForm()
-
     if (Object.keys(newErrors).length > 0) {
       setErrors(newErrors)
       return
     }
-
     setLoading(true)
-
     try {
-      // Simulate API call
-      await new Promise((resolve) => setTimeout(resolve, 1000))
-
       const userData = {
         id: Date.now(),
-        fullName: formData.fullName,
+        name: formData.name,
         email: formData.email,
         phone: formData.phone,
         role: formData.role,
+        location: loc,
+        password: formData.password,
+      };
+      const response = dispatch(signup(userData));
+      if (response.success) {
+        toast.success("Account created successfully!")
+        navigate("/login");
+        return;
       }
+      toast.error("Failed to create account. Please try again.")
+      setErrors({ submit: "Failed to create account. Please try again." })
 
-      signup(userData)
-
-      // Redirect based on role
-      if (formData.role === "poster") {
-        navigate("/poster/dashboard")
-      } else {
-        navigate("/worker/dashboard")
-      }
     } catch (error) {
+      console.error("Error during signup:", error)
       setErrors({ submit: "Failed to create account. Please try again." })
     } finally {
       setLoading(false)
@@ -134,15 +140,15 @@ const Signup = () => {
 
       <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
         <div className="bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10">
-          <form className="space-y-6" onSubmit={handleSubmit}>
+          <div className="space-y-6">
             {/* Role Selection */}
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-3">{t("selectRole")}</label>
               <div className="grid grid-cols-2 gap-3">
                 <button
                   type="button"
-                  onClick={() => handleChange({ target: { name: "role", value: "poster" } })}
-                  className={`flex flex-col items-center p-4 border-2 rounded-lg transition-colors ${formData.role === "poster"
+                  onClick={() => handleChange({ target: { name: "role", value: "client" } })}
+                  className={`flex flex-col items-center p-4 border-2 rounded-lg transition-colors ${formData.role === "client"
                     ? "border-blue-600 bg-blue-50 text-blue-600"
                     : "border-gray-300 hover:border-gray-400"
                     }`}
@@ -167,23 +173,23 @@ const Signup = () => {
 
             {/* Full Name */}
             <div>
-              <label htmlFor="fullName" className="block text-sm font-medium text-gray-700">
-                {t("fullName")}
+              <label htmlFor="name" className="block text-sm font-medium text-gray-700">
+                {t("Full Name")}
               </label>
               <div className="mt-1 relative">
                 <input
-                  id="fullName"
-                  name="fullName"
+                  id="name"
+                  name="name"
                   type="text"
-                  value={formData.fullName}
+                  value={formData.name}
                   onChange={handleChange}
-                  className={`appearance-none block w-full px-3 py-2 pl-10 border rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 ${errors.fullName ? "border-red-300" : "border-gray-300"
+                  className={`appearance-none block w-full px-3 py-2 pl-10 border rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 ${errors.name ? "border-red-300" : "border-gray-300"
                     }`}
                   placeholder="Enter your full name"
                 />
                 <User className="h-5 w-5 text-gray-400 absolute left-3 top-2.5" />
               </div>
-              {errors.fullName && <p className="mt-1 text-sm text-red-600">{errors.fullName}</p>}
+              {errors.name && <p className="mt-1 text-sm text-red-600">{errors.name}</p>}
             </div>
 
             {/* Email */}
@@ -207,8 +213,8 @@ const Signup = () => {
               {errors.email && <p className="mt-1 text-sm text-red-600">{errors.email}</p>}
             </div>
             <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">{t("Select Location")}</label>
               <LocationSelector value={loc} onChange={setLoc} required />
-              <button disabled={!loc} /* … */>Create account</button>
             </div>
             {/* Phone */}
             <div>
@@ -291,14 +297,15 @@ const Signup = () => {
 
             <div>
               <button
-                type="submit"
+                type="button"
+                onClick={handleSubmit}
                 disabled={loading}
                 className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {loading ? t("loading") : t("createAccount")}
               </button>
             </div>
-          </form>
+          </div>
         </div>
       </div>
     </div>

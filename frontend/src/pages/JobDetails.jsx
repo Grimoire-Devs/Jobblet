@@ -3,13 +3,13 @@
 import { useState, useEffect } from "react"
 import { useParams, useNavigate } from "react-router-dom"
 import { useLanguage } from "../contexts/LanguageContext"
-import { useAuth } from "../contexts/AuthContext"
+import { useSelector } from "react-redux"
 import { ArrowLeft, MapPin, DollarSign, Clock, Star, AlertCircle, Send, Bookmark, Share2 } from "lucide-react"
 
 const JobDetail = () => {
   const { jobId } = useParams()
   const { t } = useLanguage()
-  const { user } = useAuth()
+  const user = useSelector((state) => state.user.user)
   const navigate = useNavigate()
 
   const [job, setJob] = useState(null)

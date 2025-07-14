@@ -1,16 +1,16 @@
 "use client"
 import { Link, useNavigate } from "react-router-dom"
 import { useLanguage } from "../contexts/LanguageContext"
-import { useAuth } from "../contexts/AuthContext"
 import { Languages, User, LogOut, Briefcase } from "lucide-react"
-
+const user = {
+  name: "Abhinav",
+}
 const Header = () => {
   const { language, toggleLanguage, t } = useLanguage()
-  const { user, logout } = useAuth()
   const navigate = useNavigate()
 
   const handleLogout = () => {
-    logout()
+    // logout()
     navigate("/")
   }
 

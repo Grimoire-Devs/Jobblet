@@ -3,13 +3,14 @@
 import { useState } from "react"
 import { useNavigate } from "react-router-dom"
 import { useLanguage } from "../contexts/LanguageContext"
-import { useAuth } from "../contexts/AuthContext"
 import { ArrowLeft, ArrowRight, MapPin, DollarSign, Calendar } from "lucide-react"
+
+import { useSelector } from "react-redux"
 
 const CreateJob = () => {
   const { t } = useLanguage()
-  const { user } = useAuth()
   const navigate = useNavigate()
+  const user = useSelector((state) => state.user.user)
 
   const [currentStep, setCurrentStep] = useState(1)
   const [formData, setFormData] = useState({
@@ -142,9 +143,8 @@ const CreateJob = () => {
                 name="title"
                 value={formData.title}
                 onChange={handleChange}
-                className={`w-full px-3 py-2 border rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 ${
-                  errors.title ? "border-red-300" : "border-gray-300"
-                }`}
+                className={`w-full px-3 py-2 border rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 ${errors.title ? "border-red-300" : "border-gray-300"
+                  }`}
                 placeholder="e.g., House cleaning service needed"
               />
               {errors.title && <p className="mt-1 text-sm text-red-600">{errors.title}</p>}
@@ -158,11 +158,10 @@ const CreateJob = () => {
                     key={category.key}
                     type="button"
                     onClick={() => handleChange({ target: { name: "category", value: category.key } })}
-                    className={`flex flex-col items-center p-4 border-2 rounded-lg transition-colors ${
-                      formData.category === category.key
+                    className={`flex flex-col items-center p-4 border-2 rounded-lg transition-colors ${formData.category === category.key
                         ? "border-blue-600 bg-blue-50 text-blue-600"
                         : "border-gray-300 hover:border-gray-400"
-                    }`}
+                      }`}
                   >
                     <span className="text-2xl mb-2">{category.icon}</span>
                     <span className="text-sm font-medium">{category.label}</span>
@@ -187,9 +186,8 @@ const CreateJob = () => {
                 rows={6}
                 value={formData.description}
                 onChange={handleChange}
-                className={`w-full px-3 py-2 border rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 ${
-                  errors.description ? "border-red-300" : "border-gray-300"
-                }`}
+                className={`w-full px-3 py-2 border rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 ${errors.description ? "border-red-300" : "border-gray-300"
+                  }`}
                 placeholder="Describe the job in detail. Include what needs to be done, any specific requirements, and what you're looking for in a worker."
               />
               <div className="flex justify-between items-center mt-1">
@@ -252,9 +250,8 @@ const CreateJob = () => {
                     name="budget"
                     value={formData.budget}
                     onChange={handleChange}
-                    className={`w-full pl-10 pr-3 py-2 border rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 ${
-                      errors.budget ? "border-red-300" : "border-gray-300"
-                    }`}
+                    className={`w-full pl-10 pr-3 py-2 border rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 ${errors.budget ? "border-red-300" : "border-gray-300"
+                      }`}
                     placeholder={formData.budgetType === "fixed" ? "Enter total budget" : "Enter hourly rate"}
                   />
                 </div>
@@ -274,9 +271,8 @@ const CreateJob = () => {
                   name="location"
                   value={formData.location}
                   onChange={handleChange}
-                  className={`w-full pl-10 pr-3 py-2 border rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 ${
-                    errors.location ? "border-red-300" : "border-gray-300"
-                  }`}
+                  className={`w-full pl-10 pr-3 py-2 border rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 ${errors.location ? "border-red-300" : "border-gray-300"
+                    }`}
                   placeholder="e.g., Bandra West, Mumbai"
                 />
               </div>
@@ -293,9 +289,8 @@ const CreateJob = () => {
                 name="pincode"
                 value={formData.pincode}
                 onChange={handleChange}
-                className={`w-full px-3 py-2 border rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 ${
-                  errors.pincode ? "border-red-300" : "border-gray-300"
-                }`}
+                className={`w-full px-3 py-2 border rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 ${errors.pincode ? "border-red-300" : "border-gray-300"
+                  }`}
                 placeholder="e.g., 400050"
                 maxLength={6}
               />
@@ -320,9 +315,8 @@ const CreateJob = () => {
                     name="startDate"
                     value={formData.startDate}
                     onChange={handleChange}
-                    className={`w-full pl-10 pr-3 py-2 border rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 ${
-                      errors.startDate ? "border-red-300" : "border-gray-300"
-                    }`}
+                    className={`w-full pl-10 pr-3 py-2 border rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 ${errors.startDate ? "border-red-300" : "border-gray-300"
+                      }`}
                   />
                 </div>
                 {errors.startDate && <p className="mt-1 text-sm text-red-600">{errors.startDate}</p>}
@@ -377,11 +371,10 @@ const CreateJob = () => {
                     key={option.value}
                     type="button"
                     onClick={() => handleChange({ target: { name: "urgency", value: option.value } })}
-                    className={`p-3 border-2 rounded-lg text-center transition-colors ${
-                      formData.urgency === option.value
+                    className={`p-3 border-2 rounded-lg text-center transition-colors ${formData.urgency === option.value
                         ? "border-blue-600 bg-blue-50 text-blue-600"
                         : "border-gray-300 hover:border-gray-400"
-                    }`}
+                      }`}
                   >
                     <div className="font-medium">{option.label}</div>
                     <div className="text-xs text-gray-500">{option.desc}</div>
@@ -471,11 +464,10 @@ const CreateJob = () => {
             {steps.map((step, index) => (
               <div key={step.number} className="flex items-center">
                 <div
-                  className={`flex items-center justify-center w-10 h-10 rounded-full border-2 ${
-                    currentStep >= step.number
+                  className={`flex items-center justify-center w-10 h-10 rounded-full border-2 ${currentStep >= step.number
                       ? "bg-blue-600 border-blue-600 text-white"
                       : "border-gray-300 text-gray-500"
-                  }`}
+                    }`}
                 >
                   {step.number}
                 </div>

@@ -118,3 +118,36 @@
     transition-duration: 0.01ms !important;
   }
 }
+
+/* collapsed field */
+.ls-field{width:100%;padding:8px 12px;border:1px solid #ccc;border-radius:4px;text-align:left}
+
+/* overlay */
+.ls-overlay{position:fixed;inset:0;z-index:50;display:flex;flex-direction:column;background:rgba(0,0,0,.6)}
+
+/* header row */
+.ls-header{display:flex;gap:6px;padding:8px 12px;background:#fff}
+.ls-header input{flex:1 1 auto;padding:6px 10px;border:1px solid #ccc;border-radius:4px;font-size:14px}
+
+/* suggestion list (above map) */
+.ls-suggest{position:absolute;left:12px;right:12px;top:60px;max-height:200px;overflow:auto;
+            background:#fff;border:1px solid #ddd;border-radius:4px;z-index:60;font-size:14px}
+.ls-suggest li{padding:6px 10px;cursor:pointer}
+.ls-suggest li:hover{background:#f1f1f1}
+
+/* map — 70 % viewport height */
+.ls-map{height:70vh;width:100%;position:relative}
+
+/* loading overlay on map */
+.ls-loading{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
+            background:rgba(255,255,255,.85);font-size:14px}
+.ls-spin{display:inline-block;width:18px;height:18px;border:3px solid #aaa;
+         border-top:3px solid transparent;border-radius:50%;animation:ls-spin .8s linear infinite}
+@keyframes ls-spin{to{transform:rotate(360deg)}}
+
+/* footer */
+.ls-footer{display:flex;justify-content:flex-end;padding:8px 12px;background:#fff}
+.ls-save{background:#2563eb;color:#fff;padding:6px 14px;border:none;border-radius:4px;font-size:14px}
+
+/* credits */
+.ls-credit{position:absolute;bottom:4px;right:8px;font-size:10px;color:#999}

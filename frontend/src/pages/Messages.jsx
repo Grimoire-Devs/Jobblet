@@ -3,13 +3,14 @@
 import { useState, useEffect, useRef } from "react"
 import { useParams } from "react-router-dom"
 import { useLanguage } from "../contexts/LanguageContext"
-import { useAuth } from "../contexts/AuthContext"
 import { Send, Paperclip, ImageIcon, Phone, Video, MoreVertical, Search } from "lucide-react"
+import { useSelector } from "react-redux"
 
 const Messages = () => {
   const { threadId } = useParams()
   const { t } = useLanguage()
-  const { user } = useAuth()
+  // const { user } = useAuth()
+  const user = useSelector((state) => state.user.user)
   const [conversations, setConversations] = useState([])
   const [activeConversation, setActiveConversation] = useState(null)
   const [messages, setMessages] = useState([])
@@ -224,9 +225,8 @@ const Messages = () => {
                       setActiveConversation(conversation)
                       fetchMessages(conversation.id)
                     }}
-                    className={`w-full p-4 border-b border-gray-100 hover:bg-gray-50 transition-colors text-left ${
-                      activeConversation?.id === conversation.id ? "bg-blue-50 border-blue-200" : ""
-                    }`}
+                    className={`w-full p-4 border-b border-gray-100 hover:bg-gray-50 transition-colors text-left ${activeConversation?.id === conversation.id ? "bg-blue-50 border-blue-200" : ""
+                      }`}
                   >
                     <div className="flex items-center space-x-3">
                       <div className="relative">
@@ -309,15 +309,13 @@ const Messages = () => {
                         className={`flex ${message.senderId === user.id ? "justify-end" : "justify-start"}`}
                       >
                         <div
-                          className={`max-w-xs lg:max-w-md px-4 py-2 rounded-lg ${
-                            message.senderId === user.id ? "bg-blue-600 text-white" : "bg-gray-200 text-gray-900"
-                          }`}
+                          className={`max-w-xs lg:max-w-md px-4 py-2 rounded-lg ${message.senderId === user.id ? "bg-blue-600 text-white" : "bg-gray-200 text-gray-900"
+                            }`}
                         >
                           <p className="text-sm">{message.message}</p>
                           <p
-                            className={`text-xs mt-1 ${
-                              message.senderId === user.id ? "text-blue-100" : "text-gray-500"
-                            }`}
+                            className={`text-xs mt-1 ${message.senderId === user.id ? "text-blue-100" : "text-gray-500"
+                              }`}
                           >
                             {formatTime(message.timestamp)}
                           </p>

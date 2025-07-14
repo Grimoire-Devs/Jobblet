@@ -3,12 +3,11 @@
 import { useState } from "react"
 import { Link, useNavigate } from "react-router-dom"
 import { useLanguage } from "../contexts/LanguageContext"
-import { useAuth } from "../contexts/AuthContext"
 import { Briefcase, Mail, Lock, Eye, EyeOff } from "lucide-react"
 
 const Login = () => {
   const { t } = useLanguage()
-  const { login } = useAuth()
+  
   const navigate = useNavigate()
 
   const [formData, setFormData] = useState({

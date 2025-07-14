@@ -3,13 +3,13 @@
 import { useState, useEffect } from "react"
 import { useNavigate } from "react-router-dom"
 import { useLanguage } from "../contexts/LanguageContext"
-import { useAuth } from "../contexts/AuthContext"
 import LocationSelector from "../components/LocationSelector"
 import { User, Upload, Save, ArrowRight } from "lucide-react"
-
+import { useSelector } from "react-redux"
 const ProfileComplete = () => {
   const { t } = useLanguage()
-  const { user, login } = useAuth()
+  // const { user, login } = useAuth()
+  const user = useSelector((state) => state.user.user)
   const navigate = useNavigate()
 
   const [formData, setFormData] = useState({

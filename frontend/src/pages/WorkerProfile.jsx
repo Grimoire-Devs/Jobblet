@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react"
 import { useParams, Link } from "react-router-dom"
 import { useLanguage } from "../contexts/LanguageContext"
-import { useAuth } from "../contexts/AuthContext"
+import { useSelector } from "react-redux"
 import {
   Star,
   MapPin,
@@ -20,7 +20,8 @@ import {
 const WorkerProfile = () => {
   const { workerId } = useParams()
   const { t } = useLanguage()
-  const { user } = useAuth()
+  // const { user } = useAuth()
+  const user = useSelector((state) => state.user.user)
   const [worker, setWorker] = useState(null)
   const [loading, setLoading] = useState(true)
   const [activeTab, setActiveTab] = useState("about")
@@ -119,13 +120,12 @@ const WorkerProfile = () => {
     return Array.from({ length: 5 }, (_, index) => (
       <Star
         key={index}
-        className={`h-4 w-4 ${
-          index < Math.floor(rating)
+        className={`h-4 w-4 ${index < Math.floor(rating)
             ? "text-yellow-400 fill-current"
             : index < rating
               ? "text-yellow-400 fill-current opacity-50"
               : "text-gray-300"
-        }`}
+          }`}
       />
     ))
   }
@@ -237,11 +237,10 @@ const WorkerProfile = () => {
                     <button
                       key={tab.key}
                       onClick={() => setActiveTab(tab.key)}
-                      className={`py-4 px-1 border-b-2 font-medium text-sm ${
-                        activeTab === tab.key
+                      className={`py-4 px-1 border-b-2 font-medium text-sm ${activeTab === tab.key
                           ? "border-blue-500 text-blue-600"
                           : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
-                      }`}
+                        }`}
                     >
                       {tab.label}
                     </button>

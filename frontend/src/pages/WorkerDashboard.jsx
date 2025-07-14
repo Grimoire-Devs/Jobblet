@@ -3,12 +3,12 @@
 import { useState, useEffect } from "react"
 import { Link } from "react-router-dom"
 import { useLanguage } from "../contexts/LanguageContext"
-import { useAuth } from "../contexts/AuthContext"
 import { Search, Calendar, DollarSign, Star, Clock, MapPin, Bookmark, TrendingUp, Award, Eye } from "lucide-react"
-
+import { useSelector } from "react-redux"
 const WorkerDashboard = () => {
   const { t } = useLanguage()
-  const { user } = useAuth()
+  // const { user } = useAuth()
+  const user = useSelector((state) => state.user.user)
   const [todayJobs, setTodayJobs] = useState([])
   const [savedJobs, setSavedJobs] = useState([])
   const [stats, setStats] = useState({

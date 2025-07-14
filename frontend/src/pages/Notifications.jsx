@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react"
 import { useLanguage } from "../contexts/LanguageContext"
-import { useAuth } from "../contexts/AuthContext"
+import { useSelector } from "react-redux"
 import {
   Bell,
   BellOff,
@@ -19,7 +19,8 @@ import {
 
 const Notifications = () => {
   const { t } = useLanguage()
-  const { user } = useAuth()
+  // const { user } = useAuth()/
+  const user = useSelector((state) => state.user.user)
   const [notifications, setNotifications] = useState([])
   const [loading, setLoading] = useState(true)
   const [filter, setFilter] = useState("all")

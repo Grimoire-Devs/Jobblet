@@ -3,12 +3,12 @@
 import { useState, useEffect } from "react"
 import { Link } from "react-router-dom"
 import { useLanguage } from "../contexts/LanguageContext"
-import { useAuth } from "../contexts/AuthContext"
 import { Plus, Briefcase, Users, Clock, DollarSign, Eye, Edit, Trash2, Star, MapPin } from "lucide-react"
-
+import { useSelector } from "react-redux"
 const PosterDashboard = () => {
   const { t } = useLanguage()
-  const { user } = useAuth()
+  // const { user } = useAuth()
+  const user = useSelector((state) => state.user.user)
   const [jobs, setJobs] = useState([])
   const [stats, setStats] = useState({
     totalJobs: 0,
