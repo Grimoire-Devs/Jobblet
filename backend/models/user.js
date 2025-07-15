@@ -1,5 +1,6 @@
 const mongoose = require("mongoose");
 const { createHash, randomBytes } = require("crypto");
+const tokenUtils = require("../utils/token");
 
 const pointSchema = new mongoose.Schema({
   type: {
@@ -16,6 +17,10 @@ const pointSchema = new mongoose.Schema({
 
 const userSchema = new mongoose.Schema(
   {
+    profile_complete: {
+      type: Boolean,
+      default: false,
+    },
     name: {
       type: String,
       required: true,
@@ -31,6 +36,9 @@ const userSchema = new mongoose.Schema(
     password: {
       type: String,
       required: true,
+    },
+    salt: {
+      type: String,
     },
     phone: {
       type: String,
@@ -51,8 +59,9 @@ const userSchema = new mongoose.Schema(
     },
     profileImage: {
       type: String,
+      default:
+        "https://res.cloudinary.com/dwadgr8xu/image/upload/v1752552411/blue-circle-with-white-user_78370-4707_sdbdrj.avif",
     },
-    
   },
   { timestamps: true }
 );
@@ -72,12 +81,10 @@ userSchema.pre("save", async function (next) {
 
 userSchema.static("validateUserLogin", async function (email, phone, password) {
   let user;
-  if (!email && !phone) {
-    throw new Error("Bad Request");
-  }
-  if (email) await this.findOne({ email: email });
-  else await this.findOne({ phone: phone });
-
+  console.log(email, phone, password);
+  if (email) user = await this.findOne({ email: email });
+  else user = await this.findOne({ phone: phone });
+  console.log(user, typeof user);
   if (!user) {
     throw new Error("User not found!");
   }
@@ -86,8 +93,29 @@ userSchema.static("validateUserLogin", async function (email, phone, password) {
   if (hashedPassword !== user.password) {
     throw new Error("Incorrect Password");
   }
-  const token = tokenUtils.createToken(user);
-  return token;
+  const payload = {
+    name: user.name,
+    email: user.email,
+    profileImage: user.profileImage,
+    phone: user.phone,
+    id: user._id,
+    role: user.role,
+    address: user.address,
+  };
+  const token = tokenUtils.createToken(payload);
+  const responsePayload = {
+    user: {
+      name: user.name,
+      email: user.email,
+      profileImage: user.profileImage,
+      phone: user.phone,
+      id: user._id,
+      role: user.role,
+      address: user.address,
+    },
+    token: token,
+  };
+  return responsePayload;
 });
 const User = mongoose.model("User", userSchema);
 module.exports = User;

@@ -106,8 +106,9 @@ const Signup = () => {
         location: loc,
         password: formData.password,
       };
-      const response = dispatch(signup(userData));
-      if (response.success) {
+      const response = await dispatch(signup(userData)).unwrap();
+      console.log(response);
+      if (response) {
         toast.success("Account created successfully!")
         navigate("/login");
         return;

@@ -6,10 +6,12 @@ import { useLanguage } from "../contexts/LanguageContext"
 import LocationSelector from "../components/LocationSelector"
 import { User, Upload, Save, ArrowRight } from "lucide-react"
 import { useSelector } from "react-redux"
+import { selectBusy, selectUser } from "../redux/slices/userSlice"
+
 const ProfileComplete = () => {
   const { t } = useLanguage()
   // const { user, login } = useAuth()
-  const user = useSelector((state) => state.user.user)
+  // const user = useSelector(state => state.user.user);
   const navigate = useNavigate()
 
   const [formData, setFormData] = useState({
@@ -73,14 +75,18 @@ const ProfileComplete = () => {
     "Repair & Maintenance",
   ]
 
-  useEffect(() => {
-    if (!user) {
-      navigate("/login")
-      return
-    }
 
-    if (user.profile_completed) {
-      navigate(user.role === "poster" ? "/poster/dashboard" : "/worker/dashboard")
+  const user = useSelector((state) => state.user);
+  const busy = useSelector(selectBusy);  // true while login/signup in flight
+
+  useEffect(() => {
+    if (busy) return <p>Loading…</p>;
+    console.log(user);
+    // 2. Not authenticated → kick back to login
+    if (!user || !user.user.id) return navigate("/login");
+
+    if (user.ProfileComplete) {
+      navigate(user.role === "client" ? "/client/dashboard" : "/worker/dashboard")
     }
   }, [user, navigate])
 
@@ -348,9 +354,8 @@ const ProfileComplete = () => {
                 rows={4}
                 value={formData.bio}
                 onChange={handleChange}
-                className={`w-full px-3 py-2 border rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 ${
-                  errors.bio ? "border-red-300" : "border-gray-300"
-                }`}
+                className={`w-full px-3 py-2 border rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 ${errors.bio ? "border-red-300" : "border-gray-300"
+                  }`}
                 placeholder="Tell others about yourself, your experience, and what makes you unique..."
               />
               <div className="flex justify-between items-center mt-1">
@@ -406,9 +411,8 @@ const ProfileComplete = () => {
                     name="experience"
                     value={formData.experience}
                     onChange={handleChange}
-                    className={`w-full px-3 py-2 border rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 ${
-                      errors.experience ? "border-red-300" : "border-gray-300"
-                    }`}
+                    className={`w-full px-3 py-2 border rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 ${errors.experience ? "border-red-300" : "border-gray-300"
+                      }`}
                   >
                     <option value="">Select experience level</option>
                     <option value="fresher">Fresher (0-1 years)</option>
@@ -430,9 +434,8 @@ const ProfileComplete = () => {
                     name="hourlyRate"
                     value={formData.hourlyRate}
                     onChange={handleChange}
-                    className={`w-full px-3 py-2 border rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 ${
-                      errors.hourlyRate ? "border-red-300" : "border-gray-300"
-                    }`}
+                    className={`w-full px-3 py-2 border rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 ${errors.hourlyRate ? "border-red-300" : "border-gray-300"
+                      }`}
                     placeholder="e.g., 150"
                     min="50"
                   />
@@ -476,9 +479,8 @@ const ProfileComplete = () => {
                     name="companyName"
                     value={formData.companyName}
                     onChange={handleChange}
-                    className={`w-full px-3 py-2 border rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 ${
-                      errors.companyName ? "border-red-300" : "border-gray-300"
-                    }`}
+                    className={`w-full px-3 py-2 border rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 ${errors.companyName ? "border-red-300" : "border-gray-300"
+                      }`}
                     placeholder="Enter company or organization name"
                   />
                   {errors.companyName && <p className="mt-1 text-sm text-red-600">{errors.companyName}</p>}
@@ -494,9 +496,8 @@ const ProfileComplete = () => {
                     name="companyType"
                     value={formData.companyType}
                     onChange={handleChange}
-                    className={`w-full px-3 py-2 border rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 ${
-                      errors.companyType ? "border-red-300" : "border-gray-300"
-                    }`}
+                    className={`w-full px-3 py-2 border rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 ${errors.companyType ? "border-red-300" : "border-gray-300"
+                      }`}
                   >
                     <option value="">Select type</option>
                     <option value="individual">Individual/Personal</option>
@@ -520,9 +521,8 @@ const ProfileComplete = () => {
                     rows={3}
                     value={formData.businessAddress}
                     onChange={handleChange}
-                    className={`w-full px-3 py-2 border rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 ${
-                      errors.businessAddress ? "border-red-300" : "border-gray-300"
-                    }`}
+                    className={`w-full px-3 py-2 border rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 ${errors.businessAddress ? "border-red-300" : "border-gray-300"
+                      }`}
                     placeholder="Enter your business address"
                   />
                   {errors.businessAddress && <p className="mt-1 text-sm text-red-600">{errors.businessAddress}</p>}

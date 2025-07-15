@@ -2,15 +2,23 @@
 import { Link, useNavigate } from "react-router-dom"
 import { useLanguage } from "../contexts/LanguageContext"
 import { Languages, User, LogOut, Briefcase } from "lucide-react"
-const user = {
-  name: "Abhinav",
-}
+
+import { useSelector, useDispatch } from "react-redux"
+import { logout } from "../redux/slices/userSlice";
+import { useEffect } from "react"
+
 const Header = () => {
   const { language, toggleLanguage, t } = useLanguage()
   const navigate = useNavigate()
 
+  const dispatch = useDispatch();
+  const user = useSelector((state) => state.user);
+  useEffect(() => {
+    console.log("head: ",user);
+  }, [user]);
+
   const handleLogout = () => {
-    // logout()
+    dispatch(logout());
     navigate("/")
   }
 
@@ -49,7 +57,7 @@ const Header = () => {
             </button>
 
             {/* User Menu */}
-            {user ? (
+            {user.isAuthenticated ? (
               <div className="flex items-center space-x-4">
                 <Link
                   to={user.role === "poster" ? "/poster/dashboard" : "/worker/dashboard"}
@@ -59,7 +67,7 @@ const Header = () => {
                   <span className="text-sm font-medium">{t("dashboard")}</span>
                 </Link>
                 <button
-                  onClick={handleLogout}
+                  onClick={() => { handleLogout() }}
                   className="flex items-center space-x-2 px-3 py-2 rounded-md text-gray-700 hover:bg-gray-100 transition-colors"
                 >
                   <LogOut className="h-4 w-4" />

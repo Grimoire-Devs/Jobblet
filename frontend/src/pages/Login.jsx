@@ -4,15 +4,21 @@ import { useState } from "react"
 import { Link, useNavigate } from "react-router-dom"
 import { useLanguage } from "../contexts/LanguageContext"
 import { Briefcase, Mail, Lock, Eye, EyeOff } from "lucide-react"
+import { useSelector, useDispatch } from "react-redux"
+import { login, selectBusy, selectError, selectUser } from '../redux/slices/userSlice'
+import toast from "react-hot-toast"
 
 const Login = () => {
+  const baseUrl = import.meta.env.VITE_BASE_URL;
   const { t } = useLanguage()
-  
+  const dispatch = useDispatch();
+
   const navigate = useNavigate()
 
   const [formData, setFormData] = useState({
     email: "",
     password: "",
+    phone: "",
   })
   const [showPassword, setShowPassword] = useState(false)
   const [errors, setErrors] = useState({})
@@ -36,10 +42,12 @@ const Login = () => {
   const validateForm = () => {
     const newErrors = {}
 
-    if (!formData.email.trim()) {
-      newErrors.email = "Email is required"
-    } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
+    if (!formData.email.trim() && !formData.phone) {
+      newErrors.email = "Email or Phone is required"
+    } else if (formData.email && !/\S+@\S+\.\S+/.test(formData.email)) {
       newErrors.email = "Email is invalid"
+    } else if (formData.phone && !/^\d{10}$/.test(formData.phone)) {
+      newErrors.phonoe = "Phone Number required should be valid 10 digit"
     }
 
     if (!formData.password) {
@@ -61,26 +69,39 @@ const Login = () => {
     setLoading(true)
 
     try {
-      // Simulate API call
-      await new Promise((resolve) => setTimeout(resolve, 1000))
-
-      // Mock user data - in real app, this would come from API
-      const userData = {
-        id: Date.now(),
-        fullName: "John Doe",
+      const response = await dispatch(login({
         email: formData.email,
-        role: formData.email.includes("poster") ? "poster" : "worker",
+        phone: formData.phone,
+        password: formData.password,
+      })).unwrap();
+      // console.log("res: ",response);
+      if (response) {
+        toast.success("Successfully LoggedIn");
+        const user = response.payload.user;
+        // console.log('user: ', user);
+        if (user.role === "worker") {
+          const response = await fetch(`${baseUrl}/user/${user.id}/profile-complete/`);
+          const data = await response.json();
+          if (data.profileComplete) {
+            navigate('/worker/dashboard');
+          } else {
+            console.log(data, (data.profileComplete));
+            // navigate('/profile/complete');
+          }
+        } else if (user.role === "client") {
+          const response = await fetch(`${baseUrl}/user/${user.id}/profile-complete/`);
+          const data = await response.json();
+          if (data.profile_complete) {
+            navigate('/client/dashboard');
+          } else {
+            navigate('/profile/complete');
+          }
+        }
+        return;
       }
-
-      login(userData)
-
-      // Redirect based on role
-      if (userData.role === "poster") {
-        navigate("/poster/dashboard")
-      } else {
-        navigate("/worker/dashboard")
-      }
-    } catch (error) {
+      toast.error("Something Went Wrong. Try Again");
+    } catch (err) {
+      console.log(err);
       setErrors({ submit: "Invalid email or password. Please try again." })
     } finally {
       setLoading(false)
@@ -104,7 +125,7 @@ const Login = () => {
 
       <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
         <div className="bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10">
-          <form className="space-y-6" onSubmit={handleSubmit}>
+          <div className="space-y-6">
             {/* Email */}
             <div>
               <label htmlFor="email" className="block text-sm font-medium text-gray-700">
@@ -117,14 +138,33 @@ const Login = () => {
                   type="email"
                   value={formData.email}
                   onChange={handleChange}
-                  className={`appearance-none block w-full px-3 py-2 pl-10 border rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 ${
-                    errors.email ? "border-red-300" : "border-gray-300"
-                  }`}
+                  className={`appearance-none block w-full px-3 py-2 pl-10 border rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 ${errors.email ? "border-red-300" : "border-gray-300"
+                    }`}
                   placeholder="Enter your email"
                 />
                 <Mail className="h-5 w-5 text-gray-400 absolute left-3 top-2.5" />
               </div>
               {errors.email && <p className="mt-1 text-sm text-red-600">{errors.email}</p>}
+            </div>
+
+            <div>
+              <label htmlFor="phone" className="block text-sm font-medium text-gray-700">
+                {t("phone")}
+              </label>
+              <div className="mt-1 relative">
+                <input
+                  id="phone"
+                  name="phone"
+                  type="tel"
+                  value={formData.phone}
+                  onChange={handleChange}
+                  className={`appearance-none block w-full px-3 py-2 pl-10 border rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 ${errors.phone ? "border-red-300" : "border-gray-300"
+                    }`}
+                  placeholder="Enter your email"
+                />
+                <Mail className="h-5 w-5 text-gray-400 absolute left-3 top-2.5" />
+              </div>
+              {errors.phone && <p className="mt-1 text-sm text-red-600">{errors.phone}</p>}
             </div>
 
             {/* Password */}
@@ -139,9 +179,8 @@ const Login = () => {
                   type={showPassword ? "text" : "password"}
                   value={formData.password}
                   onChange={handleChange}
-                  className={`appearance-none block w-full px-3 py-2 pl-10 pr-10 border rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 ${
-                    errors.password ? "border-red-300" : "border-gray-300"
-                  }`}
+                  className={`appearance-none block w-full px-3 py-2 pl-10 pr-10 border rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 ${errors.password ? "border-red-300" : "border-gray-300"
+                    }`}
                   placeholder="Enter your password"
                 />
                 <Lock className="h-5 w-5 text-gray-400 absolute left-3 top-2.5" />
@@ -181,6 +220,7 @@ const Login = () => {
             <div>
               <button
                 type="submit"
+                onClick={handleSubmit}
                 disabled={loading}
                 className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed"
               >
@@ -188,7 +228,7 @@ const Login = () => {
               </button>
             </div>
 
-            <div className="mt-6">
+            {/* <div className="mt-6">
               <div className="relative">
                 <div className="absolute inset-0 flex items-center">
                   <div className="w-full border-t border-gray-300" />
@@ -224,8 +264,8 @@ const Login = () => {
                   <span className="ml-2">Continue with Google</span>
                 </button>
               </div>
-            </div>
-          </form>
+            </div> */}
+          </div>
         </div>
       </div>
     </div>

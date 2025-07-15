@@ -9,6 +9,7 @@ const connectDB = require("./utils/connection");
 connectDB();
 
 const authRouter = require("./routes/auth");
+const userRouter = require("./routes/user");
 
 app.use(
   cors({
@@ -22,6 +23,7 @@ app.use((req, res, next) => {
 });
 
 app.use("/auth", authRouter);
+app.use("/user", userRouter);
 
 app.get("/api/health", (req, res) => {
   res.json({ status: "OK" });
