@@ -81,10 +81,10 @@ userSchema.pre("save", async function (next) {
 
 userSchema.static("validateUserLogin", async function (email, phone, password) {
   let user;
-  console.log(email, phone, password);
+  // console.log(email, phone, password);
   if (email) user = await this.findOne({ email: email });
   else user = await this.findOne({ phone: phone });
-  console.log(user, typeof user);
+  // console.log(user, typeof user);
   if (!user) {
     throw new Error("User not found!");
   }

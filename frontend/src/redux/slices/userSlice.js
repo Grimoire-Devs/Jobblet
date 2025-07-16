@@ -1,4 +1,5 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+
 const baseUrl = import.meta.env.VITE_BASE_URL;
 const initialState = {
   user: {
@@ -9,11 +10,64 @@ const initialState = {
     address: "",
     role: "",
   },
+  workerProfile: null,
   token: null,
   isAuthenticated: false,
   loading: false,
   error: null,
 };
+
+export const updateUserProfile = createAsyncThunk(
+  "/user/updateProfile",
+  async (formData, thunkAPI) => {
+    try {
+      const state = thunkAPI.getState();
+      const role = state.user.user.role;
+      let response;
+      let isMultipart = false;
+      let submitData;
+
+      if (formData.profilePhoto instanceof File) {
+        isMultipart = true;
+        submitData = new FormData();
+        submitData.append("profileImage", formData.profilePhoto);
+        const { profilePhoto, profilePhotoPreview, ...otherFields } = formData;
+        submitData.append("formData", JSON.stringify(otherFields));
+      } else {
+        submitData = { formData: { ...formData } };
+      }
+
+      if (role == "worker") {
+        response = await fetch(`${baseUrl}/user/worker/updateProfile`, {
+          method: "POST",
+          body: isMultipart ? submitData : JSON.stringify(submitData),
+          headers: isMultipart
+            ? undefined
+            : { "Content-Type": "application/json" },
+          credentials: "include",
+        });
+      } else if (role == "client") {
+        response = await fetch(`${baseUrl}/user/client/updateProfile`, {
+          method: "POST",
+          body: isMultipart ? submitData : JSON.stringify(submitData),
+          headers: isMultipart
+            ? undefined
+            : { "Content-Type": "application/json" },
+          credentials: "include",
+        });
+      } else {
+        throw new Error("Invalid role");
+      }
+      if (!response.ok) {
+        throw new Error("Some Error Occurred");
+      }
+      const data = await response.json();
+      return data;
+    } catch (err) {
+      return thunkAPI.rejectWithValue(err.message);
+    }
+  }
+);
 
 export const signup = createAsyncThunk(
   "user/signup",
@@ -23,6 +77,7 @@ export const signup = createAsyncThunk(
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formData),
+        credentials: "include",
       });
       if (!response.ok) {
         throw new Error("Some Error Occurred");
@@ -47,6 +102,7 @@ export const login = createAsyncThunk(
           phone: credentials.phone,
           password: credentials.password,
         }),
+        credentials: "include",
       });
       if (!response.ok) {
         throw new Error("Some Error Occurred");
@@ -70,6 +126,7 @@ export const userSlice = createSlice({
   reducers: {
     setUser: (state, { payload }) => {
       state.user = payload.user || initialState.user;
+      state.workerProfile = payload.workerProfile || null;
       state.token = payload.token || null;
       state.isAuthenticated = true;
       state.error = null;
@@ -108,11 +165,34 @@ export const userSlice = createSlice({
       .addCase(login.fulfilled, (s, a) => {
         s.loading = false;
         s.error = null;
-        s.user = a.user;
-        s.token = a.token;
+        s.user = a.payload.user;
+        s.workerProfile = a.payload.workerProfile || null;
+        s.token = a.payload.token;
         s.isAuthenticated = true;
       })
       .addCase(login.rejected, (s, a) => {
+        s.loading = false;
+        s.error = a.payload || a.error.message;
+      });
+    // updateUserProfile
+    builder
+      .addCase(updateUserProfile.pending, (s) => {
+        s.loading = true;
+        s.error = null;
+      })
+      .addCase(updateUserProfile.fulfilled, (s, a) => {
+        s.loading = false;
+        s.user = a.payload.user;
+        s.workerProfile = a.payload.workerProfile || null;
+        s.isAuthenticated = true;
+        if (a.payload.user && a.payload.user.address) {
+          s.user.address = {
+            address: a.payload.user.address.address || "",
+            pincode: a.payload.user.address.pincode || "",
+          };
+        }
+      })
+      .addCase(updateUserProfile.rejected, (s, a) => {
         s.loading = false;
         s.error = a.payload || a.error.message;
       });

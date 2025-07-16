@@ -164,11 +164,11 @@ const ProfileComplete = () => {
     const newErrors = {}
 
     // Common validations
-    if (!formData.bio.trim()) {
-      newErrors.bio = "Bio is required"
-    } else if (formData.bio.length < 50) {
-      newErrors.bio = "Bio should be at least 50 characters"
-    }
+    // if (!formData.bio.trim()) {
+    //   newErrors.bio = "Bio is required"
+    // } else if (formData.bio.length < 50) {
+    //   newErrors.bio = "Bio should be at least 50 characters"
+    // }
 
     if (!formData.location) {
       newErrors.location = "Location is required"
@@ -346,7 +346,7 @@ const ProfileComplete = () => {
             {/* Bio */}
             <div>
               <label htmlFor="bio" className="block text-sm font-medium text-gray-700 mb-2">
-                Bio / About Yourself *
+                Bio / About Yourself 
               </label>
               <textarea
                 id="bio"

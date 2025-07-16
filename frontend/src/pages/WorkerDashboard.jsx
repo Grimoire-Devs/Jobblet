@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { Link } from "react-router-dom"
+import { Link, useNavigate } from "react-router-dom"
 import { useLanguage } from "../contexts/LanguageContext"
 import { Search, Calendar, DollarSign, Star, Clock, MapPin, Bookmark, TrendingUp, Award, Eye } from "lucide-react"
 import { useSelector } from "react-redux"
@@ -324,7 +324,7 @@ const WorkerDashboard = () => {
                     </div>
                   </div>
                   <Link
-                    to="/worker/profile/edit"
+                    to="/profile/edit"
                     className="block w-full text-center bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 transition-colors text-sm font-medium mt-4"
                   >
                     Complete Profile

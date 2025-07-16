@@ -54,6 +54,19 @@ const workerProfileSchema = new mongoose.Schema({
       message: "Duplicate skills are not allowed.",
     },
   },
+  experience: {
+    type: String,
+    enum: ["fresher", "beginner", "intermediate", "experienced"],
+    default: "fresher",
+  },
+  hourlyRate: {
+    type: Number,
+    min: 0,
+  },
+  availability: {
+    type: [String],
+    default: [],
+  },
   completed_jobs: {
     type: {
       jobs: {

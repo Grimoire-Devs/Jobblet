@@ -1,112 +1,120 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import { Link, useNavigate } from "react-router-dom"
-import { useLanguage } from "../contexts/LanguageContext"
-import { Briefcase, Mail, Lock, Eye, EyeOff } from "lucide-react"
-import { useSelector, useDispatch } from "react-redux"
-import { login, selectBusy, selectError, selectUser } from '../redux/slices/userSlice'
-import toast from "react-hot-toast"
+import { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { useLanguage } from "../contexts/LanguageContext";
+import { Briefcase, Mail, Lock, Eye, EyeOff } from "lucide-react";
+import { useSelector, useDispatch } from "react-redux";
+import {
+  login,
+  selectBusy,
+  selectError,
+  selectUser,
+  updateUserProfile,
+} from "../redux/slices/userSlice";
+import toast from "react-hot-toast";
 
 const Login = () => {
   const baseUrl = import.meta.env.VITE_BASE_URL;
-  const { t } = useLanguage()
+  const { t } = useLanguage();
   const dispatch = useDispatch();
 
-  const navigate = useNavigate()
+  const navigate = useNavigate();
 
   const [formData, setFormData] = useState({
     email: "",
     password: "",
     phone: "",
-  })
-  const [showPassword, setShowPassword] = useState(false)
-  const [errors, setErrors] = useState({})
-  const [loading, setLoading] = useState(false)
+  });
+  const [showPassword, setShowPassword] = useState(false);
+  const [errors, setErrors] = useState({});
+  const [loading, setLoading] = useState(false);
 
   const handleChange = (e) => {
-    const { name, value } = e.target
+    const { name, value } = e.target;
     setFormData((prev) => ({
       ...prev,
       [name]: value,
-    }))
+    }));
     // Clear error when user starts typing
     if (errors[name]) {
       setErrors((prev) => ({
         ...prev,
         [name]: "",
-      }))
+      }));
     }
-  }
+  };
 
   const validateForm = () => {
-    const newErrors = {}
+    const newErrors = {};
 
     if (!formData.email.trim() && !formData.phone) {
-      newErrors.email = "Email or Phone is required"
+      newErrors.email = "Email or Phone is required";
     } else if (formData.email && !/\S+@\S+\.\S+/.test(formData.email)) {
-      newErrors.email = "Email is invalid"
+      newErrors.email = "Email is invalid";
     } else if (formData.phone && !/^\d{10}$/.test(formData.phone)) {
-      newErrors.phonoe = "Phone Number required should be valid 10 digit"
+      newErrors.phonoe = "Phone Number required should be valid 10 digit";
     }
 
     if (!formData.password) {
-      newErrors.password = "Password is required"
+      newErrors.password = "Password is required";
     }
 
-    return newErrors
-  }
+    return newErrors;
+  };
 
   const handleSubmit = async (e) => {
-    e.preventDefault()
-    const newErrors = validateForm()
+    e.preventDefault();
+    const newErrors = validateForm();
 
     if (Object.keys(newErrors).length > 0) {
-      setErrors(newErrors)
-      return
+      setErrors(newErrors);
+      return;
     }
 
-    setLoading(true)
+    setLoading(true);
 
     try {
-      const response = await dispatch(login({
-        email: formData.email,
-        phone: formData.phone,
-        password: formData.password,
-      })).unwrap();
+      const response = await dispatch(
+        login({
+          email: formData.email,
+          phone: formData.phone,
+          password: formData.password,
+        })
+      ).unwrap();
       // console.log("res: ",response);
       if (response) {
         toast.success("Successfully LoggedIn");
-        const user = response.payload.user;
-        // console.log('user: ', user);
+        const user = response.user;
+        console.log("user: ", user);
         if (user.role === "worker") {
-          const response = await fetch(`${baseUrl}/user/${user.id}/profile-complete/`);
-          const data = await response.json();
-          if (data.profileComplete) {
-            navigate('/worker/dashboard');
-          } else {
-            console.log(data, (data.profileComplete));
-            // navigate('/profile/complete');
-          }
+          // const response = await fetch(`${baseUrl}/user/${user.id}/profile-complete/`);
+          // const data = await response.json();
+          // if (data.profileComplete) {
+          navigate("/worker/dashboard");
+          // } else {
+          //   console.log((data.profileComplete));
+          //   navigate('/profile/complete');
+          // }
         } else if (user.role === "client") {
-          const response = await fetch(`${baseUrl}/user/${user.id}/profile-complete/`);
-          const data = await response.json();
-          if (data.profile_complete) {
-            navigate('/client/dashboard');
-          } else {
-            navigate('/profile/complete');
-          }
+          // const response = await fetch(`${baseUrl}/user/${user.id}/profile-complete/`);
+          // const data = await response.json();
+          // if (data.profile_complete) {
+          navigate("/client/dashboard");
+          // } else {
+          //   navigate('/profile/complete');
+          // }
         }
         return;
       }
       toast.error("Something Went Wrong. Try Again");
     } catch (err) {
       console.log(err);
-      setErrors({ submit: "Invalid email or password. Please try again." })
+      setErrors({ submit: "Invalid email or password. Please try again." });
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }
+  };
 
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
@@ -114,10 +122,15 @@ const Login = () => {
         <div className="flex justify-center">
           <Briefcase className="h-12 w-12 text-blue-600" />
         </div>
-        <h2 className="mt-6 text-center text-3xl font-bold text-gray-900">{t("login")}</h2>
+        <h2 className="mt-6 text-center text-3xl font-bold text-gray-900">
+          {t("login")}
+        </h2>
         <p className="mt-2 text-center text-sm text-gray-600">
           {t("noAccount")}{" "}
-          <Link to="/signup" className="font-medium text-blue-600 hover:text-blue-500">
+          <Link
+            to="/signup"
+            className="font-medium text-blue-600 hover:text-blue-500"
+          >
             {t("signup")}
           </Link>
         </p>
@@ -128,7 +141,10 @@ const Login = () => {
           <div className="space-y-6">
             {/* Email */}
             <div>
-              <label htmlFor="email" className="block text-sm font-medium text-gray-700">
+              <label
+                htmlFor="email"
+                className="block text-sm font-medium text-gray-700"
+              >
                 {t("email")}
               </label>
               <div className="mt-1 relative">
@@ -138,17 +154,23 @@ const Login = () => {
                   type="email"
                   value={formData.email}
                   onChange={handleChange}
-                  className={`appearance-none block w-full px-3 py-2 pl-10 border rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 ${errors.email ? "border-red-300" : "border-gray-300"
-                    }`}
+                  className={`appearance-none block w-full px-3 py-2 pl-10 border rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 ${
+                    errors.email ? "border-red-300" : "border-gray-300"
+                  }`}
                   placeholder="Enter your email"
                 />
                 <Mail className="h-5 w-5 text-gray-400 absolute left-3 top-2.5" />
               </div>
-              {errors.email && <p className="mt-1 text-sm text-red-600">{errors.email}</p>}
+              {errors.email && (
+                <p className="mt-1 text-sm text-red-600">{errors.email}</p>
+              )}
             </div>
 
             <div>
-              <label htmlFor="phone" className="block text-sm font-medium text-gray-700">
+              <label
+                htmlFor="phone"
+                className="block text-sm font-medium text-gray-700"
+              >
                 {t("phone")}
               </label>
               <div className="mt-1 relative">
@@ -158,18 +180,24 @@ const Login = () => {
                   type="tel"
                   value={formData.phone}
                   onChange={handleChange}
-                  className={`appearance-none block w-full px-3 py-2 pl-10 border rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 ${errors.phone ? "border-red-300" : "border-gray-300"
-                    }`}
+                  className={`appearance-none block w-full px-3 py-2 pl-10 border rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 ${
+                    errors.phone ? "border-red-300" : "border-gray-300"
+                  }`}
                   placeholder="Enter your email"
                 />
                 <Mail className="h-5 w-5 text-gray-400 absolute left-3 top-2.5" />
               </div>
-              {errors.phone && <p className="mt-1 text-sm text-red-600">{errors.phone}</p>}
+              {errors.phone && (
+                <p className="mt-1 text-sm text-red-600">{errors.phone}</p>
+              )}
             </div>
 
             {/* Password */}
             <div>
-              <label htmlFor="password" className="block text-sm font-medium text-gray-700">
+              <label
+                htmlFor="password"
+                className="block text-sm font-medium text-gray-700"
+              >
                 {t("password")}
               </label>
               <div className="mt-1 relative">
@@ -179,8 +207,9 @@ const Login = () => {
                   type={showPassword ? "text" : "password"}
                   value={formData.password}
                   onChange={handleChange}
-                  className={`appearance-none block w-full px-3 py-2 pl-10 pr-10 border rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 ${errors.password ? "border-red-300" : "border-gray-300"
-                    }`}
+                  className={`appearance-none block w-full px-3 py-2 pl-10 pr-10 border rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 ${
+                    errors.password ? "border-red-300" : "border-gray-300"
+                  }`}
                   placeholder="Enter your password"
                 />
                 <Lock className="h-5 w-5 text-gray-400 absolute left-3 top-2.5" />
@@ -189,10 +218,16 @@ const Login = () => {
                   onClick={() => setShowPassword(!showPassword)}
                   className="absolute right-3 top-2.5 text-gray-400 hover:text-gray-600"
                 >
-                  {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
+                  {showPassword ? (
+                    <EyeOff className="h-5 w-5" />
+                  ) : (
+                    <Eye className="h-5 w-5" />
+                  )}
                 </button>
               </div>
-              {errors.password && <p className="mt-1 text-sm text-red-600">{errors.password}</p>}
+              {errors.password && (
+                <p className="mt-1 text-sm text-red-600">{errors.password}</p>
+              )}
             </div>
 
             <div className="flex items-center justify-between">
@@ -203,19 +238,29 @@ const Login = () => {
                   type="checkbox"
                   className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
                 />
-                <label htmlFor="remember-me" className="ml-2 block text-sm text-gray-900">
+                <label
+                  htmlFor="remember-me"
+                  className="ml-2 block text-sm text-gray-900"
+                >
                   Remember me
                 </label>
               </div>
 
               <div className="text-sm">
-                <Link to="/reset" className="font-medium text-blue-600 hover:text-blue-500">
+                <Link
+                  to="/reset"
+                  className="font-medium text-blue-600 hover:text-blue-500"
+                >
                   Forgot your password?
                 </Link>
               </div>
             </div>
 
-            {errors.submit && <div className="text-sm text-red-600 text-center">{errors.submit}</div>}
+            {errors.submit && (
+              <div className="text-sm text-red-600 text-center">
+                {errors.submit}
+              </div>
+            )}
 
             <div>
               <button
@@ -269,7 +314,7 @@ const Login = () => {
         </div>
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default Login
+export default Login;

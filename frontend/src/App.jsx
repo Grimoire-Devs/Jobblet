@@ -15,6 +15,7 @@ import WorkerProfile from "./pages/WorkerProfile"
 import WorkerSearch from "./pages/WorkerSearch"
 import Messages from "./pages/Messages"
 import Notifications from "./pages/Notifications"
+import ProfileEdit from "./pages/ProfileEdit"
 import "./App.css"
 import 'maplibre-gl/dist/maplibre-gl.css';
 import { Toaster } from 'react-hot-toast';
@@ -41,6 +42,7 @@ function App() {
                   <Route path="/client/workers/:workerId" element={<WorkerProfile />} />
                   <Route path="/messages" element={<Messages />} />
                   <Route path="/messages/:threadId" element={<Messages />} />
+                  <Route path="/profile/edit" element={<ProfileEdit />} />
                   <Route path="/notifications" element={<Notifications />} />
                 </Routes>
               </main>
