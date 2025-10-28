@@ -78,4 +78,13 @@ const handleUpdateWorkerProfile = async (req, res) => {
   }
 };
 
-module.exports = { handleUpdateWorkerProfile };
+const completeProfile = async (req, res) => {
+  const userId = req.params.id;
+  const user = await User.findById(userId);
+  if (!user) {
+    return res.status(400).json({ message: "User not found" });
+  }
+  return res.status(200).json({ profileComplete: user.profile_complete });
+}
+
+module.exports = { handleUpdateWorkerProfile, completeProfile };
