@@ -113,6 +113,7 @@ const CreateJob = () => {
     setLoading(true)
 
     try {
+      // Simulate API call
       const response = await fetch(`${import.meta.env.VITE_BASE_URL}/job/create`, {
         method: 'POST',
         headers: {

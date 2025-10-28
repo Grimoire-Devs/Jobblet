@@ -245,7 +245,7 @@ const ProfileEdit = () => {
       if (user.role === "worker") {
         navigate("/worker/dashboard");
       } else if (user.role === "client") {
-        navigate("/client/dashboard");
+        navigate("/poster/dashboard");
       }
     } catch (err) {
       setErrors({ submit: "Failed to update profile. Please try again." });
