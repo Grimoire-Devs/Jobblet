@@ -1,16 +1,16 @@
-"use client"
+"use client";
 
-import { createContext, useContext, useState, useEffect } from "react"
+import { createContext, useContext, useState, useEffect } from "react";
 
-const LanguageContext = createContext()
+const LanguageContext = createContext();
 
 export const useLanguage = () => {
-  const context = useContext(LanguageContext)
+  const context = useContext(LanguageContext);
   if (!context) {
-    throw new Error("useLanguage must be used within a LanguageProvider")
+    throw new Error("useLanguage must be used within a LanguageProvider");
   }
-  return context
-}
+  return context;
+};
 
 const translations = {
   en: {
@@ -25,7 +25,8 @@ const translations = {
 
     // Home page
     heroTitle: "Connect with Local Gig Workers",
-    heroSubtitle: "Find trusted professionals for household and business needs in your area",
+    heroSubtitle:
+      "Find trusted professionals for household and business needs in your area",
     searchPlaceholder: "Search for services...",
     searchButton: "Search",
     postJobCTA: "Post a Job",
@@ -84,7 +85,8 @@ const translations = {
 
     // Home page
     heroTitle: "स्थानीय गिग वर्कर्स से जुड़ें",
-    heroSubtitle: "अपने क्षेत्र में घरेलू और व्यावसायिक जरूरतों के लिए विश्वसनीय पेशेवर खोजें",
+    heroSubtitle:
+      "अपने क्षेत्र में घरेलू और व्यावसायिक जरूरतों के लिए विश्वसनीय पेशेवर खोजें",
     searchPlaceholder: "सेवाओं की खोज करें...",
     searchButton: "खोजें",
     postJobCTA: "नौकरी पोस्ट करें",
@@ -131,24 +133,92 @@ const translations = {
     viewDetails: "विवरण देखें",
     loading: "लोड हो रहा है...",
   },
-}
+  mai: {
+    // Navigation
+    home: "घर",
+    postJob: "काज पोस्ट करू",
+    findWork: "काज खोजू",
+    login: "लॉगिन",
+    signup: "साइन अप",
+    dashboard: "डैशबोर्ड",
+    logout: "लॉगआउट",
+
+    // Home page
+    heroTitle: "स्थानीय गिग मजूर सब सँ जुड़ू",
+    heroSubtitle:
+      "अपन इलाका मे घरेलू आ व्यापारिक काजक लेल भरोसेमंद पेशेवर सब खोजू",
+    searchPlaceholder: "सेवा सब खोजू...",
+    searchButton: "खोजू",
+    postJobCTA: "काज पोस्ट करू",
+    findWorkCTA: "काज खोजू",
+
+    // Categories
+    categories: "लोकप्रिय श्रेणी सब",
+    housekeeping: "घर सफाई",
+    plumbing: "नल मिस्त्री",
+    tutoring: "पढ़ाई",
+    driving: "गाड़ी चलाबै",
+    cooking: "खाना बनाबै",
+    gardening: "बगिया काज",
+
+    // Auth
+    email: "ईमेल",
+    password: "पासवर्ड",
+    confirmPassword: "पासवर्डक पुष्टि करू",
+    phone: "फोन नम्बर",
+    fullName: "पूरा नाम",
+    selectRole: "हम चाहै छी",
+    jobPoster: "काज पोस्ट करब",
+    gigWorker: "काज खोजब",
+    createAccount: "खाता बनाउ",
+    haveAccount: "पहिनहि खाता अछि?",
+    noAccount: "खाता नहि अछि?",
+
+    // Job posting
+    jobTitle: "काजक शीर्षक",
+    jobDescription: "काजक विवरण",
+    budget: "बजट",
+    location: "स्थान",
+    category: "श्रेणी",
+    createJob: "काज बनाउ",
+
+    // Common
+    save: "सेव करू",
+    cancel: "रद्द करू",
+    edit: "संपादन करू",
+    delete: "मिटाउ",
+    apply: "आवेदन करू",
+    bid: "बोली लगाउ",
+    hire: "काज पर राखू",
+    viewDetails: "विवरण देखू",
+    loading: "लोड भ रहल अछि...",
+  },
+};
 
 export const LanguageProvider = ({ children }) => {
   const [language, setLanguage] = useState(() => {
-    return localStorage.getItem("jobblet-language") || "en"
-  })
+    return localStorage.getItem("jobblet-language") || "en";
+  });
 
   useEffect(() => {
-    localStorage.setItem("jobblet-language", language)
-  }, [language])
+    localStorage.setItem("jobblet-language", language);
+  }, [language]);
 
   const toggleLanguage = () => {
-    setLanguage((prev) => (prev === "en" ? "hi" : "en"))
-  }
+    setLanguage((prev) => {
+      if (prev === "en") return "hi";
+      if (prev === "hi") return "mai";
+      return "en";
+    });
+  };
 
   const t = (key) => {
-    return translations[language][key] || key
-  }
+    return translations[language][key] || key;
+  };
 
-  return <LanguageContext.Provider value={{ language, toggleLanguage, t }}>{children}</LanguageContext.Provider>
-}
+  return (
+    <LanguageContext.Provider value={{ language, toggleLanguage, t }}>
+      {children}
+    </LanguageContext.Provider>
+  );
+};
