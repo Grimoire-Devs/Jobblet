@@ -113,11 +113,17 @@ const CreateJob = () => {
     setLoading(true)
 
     try {
-      // Simulate API call
-      await new Promise((resolve) => setTimeout(resolve, 2000))
-
+      const response = await fetch(`${import.meta.env.VITE_BASE_URL}/job/create`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ formData }),
+        credentials: 'include'
+      });
+      const res = await response.json();
       // In real app, send data to API
-      console.log("Job created:", formData)
+      console.log("Job created:", res);
 
       // Redirect to dashboard
       navigate("/poster/dashboard")
@@ -159,8 +165,8 @@ const CreateJob = () => {
                     type="button"
                     onClick={() => handleChange({ target: { name: "category", value: category.key } })}
                     className={`flex flex-col items-center p-4 border-2 rounded-lg transition-colors ${formData.category === category.key
-                        ? "border-blue-600 bg-blue-50 text-blue-600"
-                        : "border-gray-300 hover:border-gray-400"
+                      ? "border-blue-600 bg-blue-50 text-blue-600"
+                      : "border-gray-300 hover:border-gray-400"
                       }`}
                   >
                     <span className="text-2xl mb-2">{category.icon}</span>
@@ -372,8 +378,8 @@ const CreateJob = () => {
                     type="button"
                     onClick={() => handleChange({ target: { name: "urgency", value: option.value } })}
                     className={`p-3 border-2 rounded-lg text-center transition-colors ${formData.urgency === option.value
-                        ? "border-blue-600 bg-blue-50 text-blue-600"
-                        : "border-gray-300 hover:border-gray-400"
+                      ? "border-blue-600 bg-blue-50 text-blue-600"
+                      : "border-gray-300 hover:border-gray-400"
                       }`}
                   >
                     <div className="font-medium">{option.label}</div>
@@ -465,8 +471,8 @@ const CreateJob = () => {
               <div key={step.number} className="flex items-center">
                 <div
                   className={`flex items-center justify-center w-10 h-10 rounded-full border-2 ${currentStep >= step.number
-                      ? "bg-blue-600 border-blue-600 text-white"
-                      : "border-gray-300 text-gray-500"
+                    ? "bg-blue-600 border-blue-600 text-white"
+                    : "border-gray-300 text-gray-500"
                     }`}
                 >
                   {step.number}

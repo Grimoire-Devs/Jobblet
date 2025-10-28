@@ -34,7 +34,7 @@ function App() {
                   <Route path="/login" element={<Login />} />
                   <Route path="/client/dashboard" element={<PosterDashboard />} />
                   <Route path="/worker/dashboard" element={<WorkerDashboard />} />
-                  <Route path="/client/jobs/new" element={<CreateJob />} />
+                  <Route path="/poster/jobs/new" element={<CreateJob />} />
                   <Route path="/jobs" element={<JobFeed />} />
                   <Route path="/jobs/:jobId" element={<JobDetail />} />
                   <Route path="/profile/complete" element={<ProfileComplete />} />
