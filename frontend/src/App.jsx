@@ -32,14 +32,14 @@ function App() {
                   <Route path="/" element={<Home />} />
                   <Route path="/signup" element={<Signup />} />
                   <Route path="/login" element={<Login />} />
-                  <Route path="/client/dashboard" element={<PosterDashboard />} />
+                  <Route path="/poster/dashboard" element={<PosterDashboard />} />
                   <Route path="/worker/dashboard" element={<WorkerDashboard />} />
                   <Route path="/poster/jobs/new" element={<CreateJob />} />
                   <Route path="/jobs" element={<JobFeed />} />
                   <Route path="/jobs/:jobId" element={<JobDetail />} />
                   <Route path="/profile/complete" element={<ProfileComplete />} />
-                  <Route path="/client/workers" element={<WorkerSearch />} />
-                  <Route path="/client/workers/:workerId" element={<WorkerProfile />} />
+                  <Route path="/poster/workers" element={<WorkerSearch />} />
+                  <Route path="/poster/workers/:workerId" element={<WorkerProfile />} />
                   <Route path="/messages" element={<Messages />} />
                   <Route path="/messages/:threadId" element={<Messages />} />
                   <Route path="/profile/edit" element={<ProfileEdit />} />

@@ -100,7 +100,7 @@ const Login = () => {
           // const response = await fetch(`${baseUrl}/user/${user.id}/profile-complete/`);
           // const data = await response.json();
           // if (data.profile_complete) {
-          navigate("/client/dashboard");
+          navigate("/poster/dashboard");
           // } else {
           //   navigate('/profile/complete');
           // }
