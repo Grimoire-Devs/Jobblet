@@ -1,726 +1,4 @@
-// // // "use client"
-
-// // // import { useState, useEffect } from "react"
-// // // import { MapPin, Navigation, Search, X, ChevronDown } from "lucide-react"
-
-// // // const LocationSelector = ({
-// // //   value = "",
-// // //   onChange,
-// // //   placeholder = "Select location",
-// // //   showCurrentLocation = true,
-// // //   required = false,
-// // //   className = "",
-// // //   disabled = false,
-// // // }) => {
-// // //   const [isOpen, setIsOpen] = useState(false)
-// // //   const [searchQuery, setSearchQuery] = useState("")
-// // //   const [suggestions, setSuggestions] = useState([])
-// // //   const [loading, setLoading] = useState(false)
-// // //   const [currentLocation, setCurrentLocation] = useState(null)
-// // //   const [gettingLocation, setGettingLocation] = useState(false)
-
-// // //   // Mock location data - in real app, this would come from an API
-// // //   const mockLocations = [
-// // //     { id: 1, name: "Bandra West", city: "Mumbai", pincode: "400050", state: "Maharashtra" },
-// // //     { id: 2, name: "Andheri East", city: "Mumbai", pincode: "400069", state: "Maharashtra" },
-// // //     { id: 3, name: "Powai", city: "Mumbai", pincode: "400076", state: "Maharashtra" },
-// // //     { id: 4, name: "Juhu", city: "Mumbai", pincode: "400049", state: "Maharashtra" },
-// // //     { id: 5, name: "Malad West", city: "Mumbai", pincode: "400064", state: "Maharashtra" },
-// // //     { id: 6, name: "Thane West", city: "Thane", pincode: "400601", state: "Maharashtra" },
-// // //     { id: 7, name: "Koregaon Park", city: "Pune", pincode: "411001", state: "Maharashtra" },
-// // //     { id: 8, name: "Whitefield", city: "Bangalore", pincode: "560066", state: "Karnataka" },
-// // //     { id: 9, name: "Indiranagar", city: "Bangalore", pincode: "560038", state: "Karnataka" },
-// // //     { id: 10, name: "Gurgaon Sector 14", city: "Gurgaon", pincode: "122001", state: "Haryana" },
-// // //   ]
-
-// // //   useEffect(() => {
-// // //     if (searchQuery.length > 2) {
-// // //       setLoading(true)
-// // //       // Simulate API call
-// // //       setTimeout(() => {
-// // //         const filtered = mockLocations.filter(
-// // //           (location) =>
-// // //             location.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-// // //             location.city.toLowerCase().includes(searchQuery.toLowerCase()) ||
-// // //             location.pincode.includes(searchQuery),
-// // //         )
-// // //         setSuggestions(filtered)
-// // //         setLoading(false)
-// // //       }, 300)
-// // //     } else {
-// // //       setSuggestions([])
-// // //     }
-// // //   }, [searchQuery])
-
-// // //   const getCurrentLocation = () => {
-// // //     if (!navigator.geolocation) {
-// // //       alert("Geolocation is not supported by this browser.")
-// // //       return
-// // //     }
-
-// // //     setGettingLocation(true)
-
-// // //     navigator.geolocation.getCurrentPosition(
-// // //       async (position) => {
-// // //         const { latitude, longitude } = position.coords
-
-// // //         try {
-// // //           // In real app, use reverse geocoding API
-// // //           // For demo, we'll simulate the response
-// // //           await new Promise((resolve) => setTimeout(resolve, 1000))
-
-// // //           const mockCurrentLocation = {
-// // //             name: "Current Location",
-// // //             address: "Bandra West, Mumbai, Maharashtra 400050",
-// // //             pincode: "400050",
-// // //             coordinates: { lat: latitude, lng: longitude },
-// // //           }
-
-// // //           setCurrentLocation(mockCurrentLocation)
-// // //           onChange({
-// // //             address: mockCurrentLocation.address,
-// // //             pincode: mockCurrentLocation.pincode,
-// // //             coordinates: mockCurrentLocation.coordinates,
-// // //           })
-// // //           setIsOpen(false)
-// // //         } catch (error) {
-// // //           alert("Failed to get location details. Please try again.")
-// // //         } finally {
-// // //           setGettingLocation(false)
-// // //         }
-// // //       },
-// // //       (error) => {
-// // //         setGettingLocation(false)
-// // //         switch (error.code) {
-// // //           case error.PERMISSION_DENIED:
-// // //             alert("Location access denied. Please enable location permissions.")
-// // //             break
-// // //           case error.POSITION_UNAVAILABLE:
-// // //             alert("Location information is unavailable.")
-// // //             break
-// // //           case error.TIMEOUT:
-// // //             alert("Location request timed out.")
-// // //             break
-// // //           default:
-// // //             alert("An unknown error occurred while getting location.")
-// // //             break
-// // //         }
-// // //       },
-// // //       {
-// // //         enableHighAccuracy: true,
-// // //         timeout: 10000,
-// // //         maximumAge: 300000, // 5 minutes
-// // //       },
-// // //     )
-// // //   }
-
-// // //   const selectLocation = (location) => {
-// // //     const locationData = {
-// // //       address: `${location.name}, ${location.city}, ${location.state} ${location.pincode}`,
-// // //       pincode: location.pincode,
-// // //       name: location.name,
-// // //       city: location.city,
-// // //       state: location.state,
-// // //     }
-
-// // //     onChange(locationData)
-// // //     setIsOpen(false)
-// // //     setSearchQuery("")
-// // //   }
-
-// // //   const clearLocation = () => {
-// // //     onChange("")
-// // //     setCurrentLocation(null)
-// // //     setSearchQuery("")
-// // //   }
-
-// // //   const displayValue = value?.address || value || ""
-
-// // //   return (
-// // //     <div className={`relative ${className}`}>
-// // //       <div className="relative">
-// // //         <button
-// // //           type="button"
-// // //           onClick={() => !disabled && setIsOpen(!isOpen)}
-// // //           disabled={disabled}
-// // //           className={`w-full flex items-center justify-between px-3 py-2 text-left border rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${
-// // //             disabled ? "bg-gray-100 text-gray-500 cursor-not-allowed" : "bg-white text-gray-900 hover:bg-gray-50"
-// // //           } ${!displayValue ? "text-gray-500" : ""}`}
-// // //         >
-// // //           <div className="flex items-center flex-1 min-w-0">
-// // //             <MapPin className="h-5 w-5 text-gray-400 mr-2 flex-shrink-0" />
-// // //             <span className="truncate">{displayValue || placeholder}</span>
-// // //           </div>
-// // //           <div className="flex items-center space-x-1">
-// // //             {displayValue && !disabled && (
-// // //               <button
-// // //                 type="button"
-// // //                 onClick={(e) => {
-// // //                   e.stopPropagation()
-// // //                   clearLocation()
-// // //                 }}
-// // //                 className="p-1 hover:bg-gray-200 rounded-full"
-// // //               >
-// // //                 <X className="h-4 w-4 text-gray-400" />
-// // //               </button>
-// // //             )}
-// // //             <ChevronDown className={`h-4 w-4 text-gray-400 transition-transform ${isOpen ? "rotate-180" : ""}`} />
-// // //           </div>
-// // //         </button>
-// // //         {required && !displayValue && (
-// // //           <div className="absolute inset-y-0 right-8 flex items-center">
-// // //             <span className="text-red-500">*</span>
-// // //           </div>
-// // //         )}
-// // //       </div>
-
-// // //       {isOpen && !disabled && (
-// // //         <div className="absolute z-50 w-full mt-1 bg-white border border-gray-300 rounded-md shadow-lg">
-// // //           <div className="p-3 border-b border-gray-200">
-// // //             <div className="relative">
-// // //               <Search className="absolute left-3 top-2.5 h-4 w-4 text-gray-400" />
-// // //               <input
-// // //                 type="text"
-// // //                 value={searchQuery}
-// // //                 onChange={(e) => setSearchQuery(e.target.value)}
-// // //                 placeholder="Search location..."
-// // //                 className="w-full pl-9 pr-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-// // //                 autoFocus
-// // //               />
-// // //             </div>
-// // //           </div>
-
-// // //           <div className="max-h-60 overflow-y-auto">
-// // //             {showCurrentLocation && (
-// // //               <button
-// // //                 type="button"
-// // //                 onClick={getCurrentLocation}
-// // //                 disabled={gettingLocation}
-// // //                 className="w-full flex items-center px-3 py-3 text-left hover:bg-gray-50 border-b border-gray-100 disabled:opacity-50"
-// // //               >
-// // //                 <Navigation className={`h-5 w-5 text-blue-600 mr-3 ${gettingLocation ? "animate-spin" : ""}`} />
-// // //                 <div>
-// // //                   <div className="font-medium text-blue-600">
-// // //                     {gettingLocation ? "Getting location..." : "Use current location"}
-// // //                   </div>
-// // //                   <div className="text-sm text-gray-500">
-// // //                     {gettingLocation ? "Please wait..." : "Automatically detect your location"}
-// // //                   </div>
-// // //                 </div>
-// // //               </button>
-// // //             )}
-
-// // //             {loading ? (
-// // //               <div className="px-3 py-4 text-center text-gray-500">
-// // //                 <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-blue-600 mx-auto mb-2"></div>
-// // //                 Searching...
-// // //               </div>
-// // //             ) : suggestions.length > 0 ? (
-// // //               suggestions.map((location) => (
-// // //                 <button
-// // //                   key={location.id}
-// // //                   type="button"
-// // //                   onClick={() => selectLocation(location)}
-// // //                   className="w-full flex items-center px-3 py-3 text-left hover:bg-gray-50"
-// // //                 >
-// // //                   <MapPin className="h-4 w-4 text-gray-400 mr-3 flex-shrink-0" />
-// // //                   <div className="flex-1 min-w-0">
-// // //                     <div className="font-medium text-gray-900 truncate">{location.name}</div>
-// // //                     <div className="text-sm text-gray-500 truncate">
-// // //                       {location.city}, {location.state} - {location.pincode}
-// // //                     </div>
-// // //                   </div>
-// // //                 </button>
-// // //               ))
-// // //             ) : searchQuery.length > 2 ? (
-// // //               <div className="px-3 py-4 text-center text-gray-500">No locations found for "{searchQuery}"</div>
-// // //             ) : (
-// // //               <div className="px-3 py-4 text-center text-gray-500">Type to search for locations</div>
-// // //             )}
-// // //           </div>
-// // //         </div>
-// // //       )}
-// // //     </div>
-// // //   )
-// // // }
-
-// // // export default LocationSelector
-
-
-// // "use client";
-
-// // import { useState, useEffect, useRef, useCallback } from "react";
-// // import maplibregl from "maplibre-gl";
-// // import debounce from "lodash.debounce";
-// // import {
-// //   MapPin,
-// //   Navigation,
-// //   Search,
-// //   X,
-// //   ChevronDown,
-// //   LocateFixed,
-// // } from "lucide-react";
-
-// // const GEO_KEY = import.meta.env.VITE_GEOAPIFY_KEY;          // required
-// // const STYLE_URL = `https://maps.geoapify.com/v1/styles/osm-bright/style.json?apiKey=${GEO_KEY}`;
-
-// // const AUTOCOMPLETE = (q, lat, lon) =>
-// //   `https://api.geoapify.com/v1/geocode/autocomplete?text=${encodeURIComponent(
-// //     q
-// //   )}&limit=6&lang=en&lat=${lat}&lon=${lon}&format=json&apiKey=${GEO_KEY}`;
-
-// // const REVERSE = (lat, lon) =>
-// //   `https://api.geoapify.com/v1/geocode/reverse?lat=${lat}&lon=${lon}&lang=en&format=json&apiKey=${GEO_KEY}`;
-
-// // /* ============================================================= */
-// // /*                          COMPONENT                            */
-// // /* ============================================================= */
-
-// // export default function LocationSelector({
-// //   value = null,
-// //   onChange,
-// //   placeholder = "Select location",
-// //   required = false,
-// //   className = "",
-// //   disabled = false,
-// // }) {
-// //   /* ---------- state ---------- */
-// //   const mapRef = useRef(null);
-// //   const markerRef = useRef(null);
-
-// //   const [isOpen, setIsOpen] = useState(false);
-// //   const [query, setQuery] = useState("");
-// //   const [suggestions, setSuggestions] = useState([]);
-// //   const [loading, setLoading] = useState(false);
-
-// //   /* ---------- helper → live user fix (one-shot) ---------- */
-// //   const detectPosition = () =>
-// //     new Promise((resolve, reject) => {
-// //       if (!navigator.geolocation) return reject("no-geo");
-// //       navigator.geolocation.getCurrentPosition(
-// //         (pos) => resolve(pos.coords),
-// //         (err) => reject(err),
-// //         { enableHighAccuracy: true, timeout: 8000, maximumAge: 0 }
-// //       );
-// //     });
-
-// //   /* ---------- initialise map once ---------- */
-// //   useEffect(() => {
-// //     if (!isOpen || mapRef.current) return;
-
-// //     (async () => {
-// //       /* fallback centre → Connaught Place, Delhi */
-// //       let center = { lng: 77.219, lat: 28.631 };
-
-// //       try {
-// //         const { latitude, longitude } = await detectPosition();
-// //         center = { lng: longitude, lat: latitude };
-// //       } catch (_) {
-// //         /* swallow – keep fallback */
-// //       }
-
-// //       /* map */
-// //       const map = new maplibregl.Map({
-// //         container: "mapbox", // div id
-// //         style: STYLE_URL,
-// //         center: [center.lng, center.lat],
-// //         zoom: 15,
-// //       });
-// //       mapRef.current = map;
-
-// //       /* draggable marker */
-// //       markerRef.current = new maplibregl.Marker({ draggable: true })
-// //         .setLngLat([center.lng, center.lat])
-// //         .addTo(map);
-
-// //       /* if user drags -> update address preview */
-// //       markerRef.current.on("dragend", async () => {
-// //         const { lat, lng } = markerRef.current.getLngLat();
-// //         await updateAddress(lat, lng);
-// //       });
-// //     })();
-
-// //     return () => mapRef.current?.remove(); // unmount clean-up
-// //   }, [isOpen]);
-
-// //   /* ---------- reverse-geocode helper ---------- */
-// //   const updateAddress = async (lat, lon) => {
-// //     const res = await fetch(REVERSE(lat, lon));
-// //     const { results } = await res.json();
-// //     if (!results?.length) return;
-
-// //     const best = results[0];
-// //     const payload = {
-// //       address: best.formatted,
-// //       pincode: best.postcode,
-// //       coordinates: { lat, lng: lon },
-// //     };
-// //     console.log("Selected address:", payload);
-// //     onChange(payload);
-// //   };
-
-// //   /* ---------- autocomplete (debounced) ---------- */
-// //   const doSearch = useCallback(
-// //     debounce(async (text) => {
-// //       if (text.length < 3) return setSuggestions([]);
-// //       setLoading(true);
-
-// //       /* bias search to current marker position if present */
-// //       const pos = markerRef.current?.getLngLat() || { lat: 28.631, lng: 77.219 };
-// //       const res = await fetch(AUTOCOMPLETE(text, pos.lat, pos.lng));
-// //       const { results } = await res.json();
-// //       setSuggestions(results || []);
-// //       setLoading(false);
-// //     }, 350),
-// //     []
-// //   );
-
-// //   useEffect(() => {
-// //     if (query) doSearch(query);
-// //   }, [query]);
-
-// //   /* ---------- handlers ---------- */
-// //   const chooseSuggestion = (s) => {
-// //     const { lat, lon } = s;
-// //     markerRef.current?.setLngLat([lon, lat]);
-// //     mapRef.current?.flyTo({ center: [lon, lat], zoom: 16 });
-// //     setQuery(s.formatted);
-// //     setSuggestions([]);
-// //     onChange({
-// //       address: s.formatted,
-// //       pincode: s.postcode,
-// //       coordinates: { lat, lng: lon },
-// //     });
-// //     setIsOpen(false);
-// //   };
-
-// //   const clearLocation = () => {
-// //     onChange(null);
-// //     setQuery("");
-// //   };
-
-// //   /* ---------- UI ---------- */
-// //   return (
-// //     <div className={`relative ${className}`}>
-// //       {/* collapsed input */}
-// //       <button
-// //         type="button"
-// //         disabled={disabled}
-// //         onClick={() => setIsOpen(true)}
-// //         className="flex w-full items-center gap-2 rounded border px-3 py-2 text-left"
-// //       >
-// //         <MapPin size={18} />
-// //         <span className="flex-1 truncate text-sm">
-// //           {value?.address || placeholder}
-// //         </span>
-// //         {value && <X size={14} onClick={clearLocation} />}
-// //         <ChevronDown size={16} />
-// //       </button>
-
-// //       {/* modal / dropdown */}
-// //       {isOpen && (
-// //         <div className="absolute z-20 mt-2 w-full rounded bg-white p-3 shadow-lg">
-// //           {/* search box */}
-// //           <div className="relative mb-2">
-// //             <Search size={16} className="absolute left-2 top-3 text-gray-400" />
-// //             <input
-// //               value={query}
-// //               onChange={(e) => setQuery(e.target.value)}
-// //               placeholder="Search address or landmark"
-// //               className="w-full rounded border pl-8 pr-3 py-2 text-sm"
-// //             />
-// //             {loading && (
-// //               <div className="absolute right-3 top-3 h-3 w-3 animate-spin rounded-full border-2 border-t-transparent" />
-// //             )}
-// //           </div>
-
-// //           {/* suggestions */}
-// //           {!!suggestions.length && (
-// //             <ul className="max-h-48 overflow-y-auto border-y py-1 text-sm">
-// //               {suggestions.map((s) => (
-// //                 <li
-// //                   key={s.place_id}
-// //                   onClick={() => chooseSuggestion(s)}
-// //                   className="cursor-pointer px-3 py-1 hover:bg-gray-100"
-// //                 >
-// //                   {s.formatted}
-// //                 </li>
-// //               ))}
-// //             </ul>
-// //           )}
-
-// //           {/* map panel */}
-// //           <div id="mapbox" className="h-64 w-full rounded" />
-
-// //           {/* action row */}
-// //           <div className="mt-2 flex justify-between">
-// //             <button
-// //               type="button"
-// //               onClick={async () => {
-// //                 try {
-// //                   const { latitude, longitude } = await detectPosition();
-// //                   markerRef.current?.setLngLat([longitude, latitude]);
-// //                   mapRef.current?.flyTo({ center: [longitude, latitude], zoom: 16 });
-// //                   await updateAddress(latitude, longitude);
-// //                   setIsOpen(false);
-// //                 } catch (_) {
-// //                   alert("Unable to detect current location.");
-// //                 }
-// //               }}
-// //               className="flex items-center gap-1 rounded bg-gray-100 px-3 py-2 text-xs"
-// //             >
-// //               <LocateFixed size={14} /> Use current
-// //             </button>
-
-// //             <button
-// //               type="button"
-// //               onClick={() => {
-// //                 const { lat, lng } = markerRef.current.getLngLat();
-// //                 updateAddress(lat, lng);
-// //                 setIsOpen(false);
-// //               }}
-// //               className="rounded bg-primary px-4 py-2 text-xs text-white"
-// //             >
-// //               Confirm
-// //             </button>
-// //           </div>
-// //         </div>
-// //       )}
-
-// //       {/* license credit */}
-// //       <p className="mt-1 text-right text-[10px] text-gray-400">
-// //         © OpenStreetMap contributors | © Geoapify
-// //       </p>
-// //     </div>
-// //   );
-// // }
-// /* LocationSelector.jsx – Vite / React (plain JS) */
-
-
-// /* LocationSelector.jsx – plain React + Vite */
-// "use client";
-
-// import { useState, useEffect, useRef, useCallback } from "react";
-// import maplibregl from "maplibre-gl";
-// import debounce from "lodash.debounce";
-// import "maplibre-gl/dist/maplibre-gl.css";
-
-// const GEO_KEY = import.meta.env.VITE_GEOAPIFY_KEY;
-// const STYLE   = `https://maps.geoapify.com/v1/styles/osm-bright/style.json?apiKey=${GEO_KEY}`;
-
-// const autoURL = (q, lat, lon) =>
-//   `https://api.geoapify.com/v1/geocode/autocomplete?text=${encodeURIComponent(q)}&limit=6&lat=${lat}&lon=${lon}&format=json&apiKey=${GEO_KEY}`;
-
-// const revURL  = (lat, lon) =>
-//   `https://api.geoapify.com/v1/geocode/reverse?lat=${lat}&lon=${lon}&format=json&apiKey=${GEO_KEY}`;
-
-// export default function LocationSelector({
-//   value        = null,
-//   onChange,
-//   placeholder  = "Select location",
-//   disabled     = false
-// }) {
-//   /* ───────────────── modal & search state ───────────────── */
-//   const [open,   setOpen]   = useState(false);
-//   const [query,  setQuery]  = useState("");
-//   const [opts,   setOpts]   = useState([]);
-//   const [spin,   setSpin]   = useState(false);
-
-//   /* ───────────────── map loading indicator ───────────────── */
-//   const [mapBusy, setMapBusy] = useState(false);
-
-//   /* ───────────────── refs ───────────────── */
-//   const mapRef  = useRef(null);
-//   const pinRef  = useRef(null);
-
-//   /* get single GPS fix */
-//   const locate = () =>
-//     new Promise((res, rej) => {
-//       if (!navigator.geolocation) return rej();
-//       navigator.geolocation.getCurrentPosition(
-//         p => res(p.coords),
-//         rej,
-//         { enableHighAccuracy: true, timeout: 8000, maximumAge: 0 }
-//       );
-//     });
-
-//   /* reverse-geocode and lift state up */
-//   const pushAddress = async (lat, lon) => {
-//     const r = await fetch(revURL(lat, lon)).then(r => r.json());
-//     if (!r.results?.[0]) return;
-//     const best = r.results[0];
-//     onChange({
-//       address: best.formatted,
-//       pincode: best.postcode,
-//       coordinates: { lat, lng: lon }
-//     });
-//   };
-
-//   /* mount NEW map every time modal opens */
-//   useEffect(() => {
-//     if (!open) return;
-
-//     (async () => {
-//       setMapBusy(true);                 // show loading overlay
-
-//       /* choose centre */
-//       let centre = { lat: 28.6139, lng: 77.2090 };
-//       try {
-//         const { latitude, longitude } = await locate();
-//         centre = { lat: latitude, lng: longitude };
-//       } catch {/* ignore deny/time-out */ }
-
-//       /* build map */
-//       const map = new maplibregl.Map({
-//         container: "selector-map",
-//         style: STYLE,
-//         center: [centre.lng, centre.lat],
-//         zoom: 15
-//       });
-//       mapRef.current = map;
-
-//       /* hide spinner once first style & tiles render */
-//       map.on("load", () => setMapBusy(false));
-
-//       /* draggable marker */
-//       pinRef.current = new maplibregl.Marker({ draggable: true })
-//         .setLngLat([centre.lng, centre.lat])
-//         .addTo(map);
-
-//       pinRef.current.on("dragend", () => {
-//         const { lat, lng } = pinRef.current.getLngLat();
-//         pushAddress(lat, lng);
-//       });
-//     })();
-
-//     /* cleanup → always null-out refs so next open mounts fresh */
-//     return () => {
-//       mapRef.current?.remove();
-//       mapRef.current = null;
-//       pinRef.current = null;
-//     };
-//   }, [open]);
-
-//   /* debounced autocomplete */
-//   const auto = useCallback(
-//     debounce(async text => {
-//       if (text.length < 3) return setOpts([]);
-//       setSpin(true);
-//       const pos = pinRef.current?.getLngLat() || { lat: 28.6, lng: 77.2 };
-//       const r   = await fetch(autoURL(text, pos.lat, pos.lng)).then(r => r.json());
-//       setOpts(r.results || []);
-//       setSpin(false);
-//     }, 350),
-//     []
-//   );
-//   useEffect(() => { auto(query); }, [query]);
-
-//   /* ───────────────── UI ───────────────── */
-//   return (
-//     <>
-//       {/* collapsed field */}
-//       <button
-//         type="button"
-//         disabled={disabled}
-//         onClick={() => setOpen(true)}
-//         className="flex w-full items-center gap-2 rounded border px-3 py-2 text-left"
-//       >
-//         <span className="flex-1 truncate text-sm">
-//           {value?.address || placeholder}
-//         </span>
-//       </button>
-
-//       {/* modal */}
-//       {open && (
-//         <div className="fixed inset-0 z-50 flex flex-col bg-black/60">
-//           {/* header */}
-//           <div className="flex items-center gap-2 bg-white px-4 py-3">
-//             <input
-//               value={query}
-//               onChange={e => setQuery(e.target.value)}
-//               className="flex-1 rounded border px-3 py-2 text-sm"
-//               placeholder="Search address or landmark"
-//             />
-//             {spin && <div className="h-4 w-4 animate-spin rounded-full border-2 border-t-transparent" />}
-//             <button
-//               onClick={async () => {
-//                 try {
-//                   const { latitude, longitude } = await locate();
-//                   pinRef.current?.setLngLat([longitude, latitude]);
-//                   mapRef.current?.flyTo({ center: [longitude, latitude], zoom: 16 });
-//                   await pushAddress(latitude, longitude);
-//                 } catch { alert("Location unavailable"); }
-//               }}
-//               className="rounded bg-gray-100 px-3 py-2 text-xs"
-//             >
-//               Use current
-//             </button>
-//             <button
-//               onClick={() => setOpen(false)}
-//               className="rounded bg-gray-100 px-3 py-2 text-xs"
-//             >
-//               ✕
-//             </button>
-//           </div>
-
-//           {/* suggestions */}
-//           {!!opts.length && (
-//             <ul className="absolute left-4 right-4 top-16 max-h-56 overflow-y-auto rounded border bg-white text-sm shadow">
-//               {opts.map(o => (
-//                 <li
-//                   key={o.place_id}
-//                   onClick={() => {
-//                     const { lat, lon } = o;
-//                     pinRef.current?.setLngLat([lon, lat]);
-//                     mapRef.current?.flyTo({ center: [lon, lat], zoom: 16 });
-//                     setQuery(o.formatted);
-//                     setOpts([]);
-//                     pushAddress(lat, lon);
-//                   }}
-//                   className="cursor-pointer px-3 py-2 hover:bg-gray-100"
-//                 >
-//                   {o.formatted}
-//                 </li>
-//               ))}
-//             </ul>
-//           )}
-
-//           {/* map container */}
-//           <div id="selector-map" className="relative h-[75vh] w-full">
-//             {mapBusy && (
-//               <div className="absolute inset-0 flex items-center justify-center bg-white/80">
-//                 <div className="h-6 w-6 animate-spin rounded-full border-2 border-t-transparent" />
-//                 <span className="ml-3 text-sm">Loading map…</span>
-//               </div>
-//             )}
-//           </div>
-
-//           {/* footer */}
-//           <div className="flex justify-end gap-2 bg-white px-4 py-3">
-//             <button
-//               onClick={() => setOpen(false)}
-//               className="rounded bg-gray-100 px-4 py-2 text-sm"
-//             >
-//               Cancel
-//             </button>
-//             <button
-//               onClick={() => setOpen(false)}
-//               className="rounded bg-primary px-4 py-2 text-sm text-white"
-//             >
-//               Save location
-//             </button>
-//           </div>
-
-//           <p className="absolute bottom-1 right-2 text-[10px] text-gray-300">
-//             © OpenStreetMap contributors | © Geoapify
-//           </p>
-//         </div>
-//       )}
-//     </>
-//   );
-// }
-
-/* LocationSelector.jsx – React 18/19 + Vite */
+/* LocationSelector.jsx – Modern UI Design */
 "use client";
 
 import { useState, useEffect, useRef } from "react";
@@ -731,7 +9,9 @@ const GEO_KEY = import.meta.env.VITE_GEOAPIFY_KEY;
 const STYLE = `https://maps.geoapify.com/v1/styles/osm-bright/style.json?apiKey=${GEO_KEY}`;
 
 const autoURL = (q, lat, lon) =>
-  `https://api.geoapify.com/v1/geocode/autocomplete?text=${encodeURIComponent(q)}&limit=6&lat=${lat}&lon=${lon}&format=json&apiKey=${GEO_KEY}`;
+  `https://api.geoapify.com/v1/geocode/autocomplete?text=${encodeURIComponent(
+    q
+  )}&limit=6&lat=${lat}&lon=${lon}&format=json&apiKey=${GEO_KEY}`;
 
 const revURL = (lat, lon) =>
   `https://api.geoapify.com/v1/geocode/reverse?lat=${lat}&lon=${lon}&format=json&apiKey=${GEO_KEY}`;
@@ -740,8 +20,8 @@ export default function LocationSelector({ value = null, onChange }) {
   const [open, setOpen] = useState(false);
   const [query, setQuery] = useState("");
   const [opts, setOpts] = useState([]);
-  const [mapBusy, setMapBusy] = useState(false);   // style / tiles loading
-  const [listBusy, setListBusy] = useState(false);   // autocomplete fetch
+  const [mapBusy, setMapBusy] = useState(false);
+  const [listBusy, setListBusy] = useState(false);
 
   const mapRef = useRef(null);
   const pinRef = useRef(null);
@@ -750,44 +30,44 @@ export default function LocationSelector({ value = null, onChange }) {
   const locate = () =>
     new Promise((res, rej) => {
       if (!navigator.geolocation) return rej();
-      navigator.geolocation.getCurrentPosition(
-        p => res(p.coords),
-        rej,
-        { enableHighAccuracy: true, timeout: 8e3, maximumAge: 0 });
+      navigator.geolocation.getCurrentPosition((p) => res(p.coords), rej, {
+        enableHighAccuracy: true,
+        timeout: 8e3,
+        maximumAge: 0,
+      });
     });
 
   const pushAddress = async (lat, lon) => {
-    const r = await fetch(revURL(lat, lon)).then(r => r.json());
+    const r = await fetch(revURL(lat, lon)).then((r) => r.json());
     if (!r.results?.[0]) return;
     const best = r.results[0];
     onChange({
       address: best.formatted,
       pincode: best.postcode,
-      coordinates: { lat, lng: lon }
+      coordinates: { lat, lng: lon },
     });
     setStartLat(lat);
     setStartLng(lon);
   };
 
   /* ─────────── mount fresh map on every open ─────────── */
-  const [startLat, setStartLat] = useState(28.6139)
-  const [startLng, setStartLng] = useState(77.2090)
+  const [startLat, setStartLat] = useState(28.6139);
+  const [startLng, setStartLng] = useState(77.209);
 
   useEffect(() => {
     if (!open) return;
 
     setMapBusy(true);
-    const start = { lat: startLat, lng: startLng };   // Delhi fallback
+    const start = { lat: startLat, lng: startLng };
     const map = new maplibregl.Map({
       container: "ls-map",
       style: STYLE,
       center: [start.lng, start.lat],
-      zoom: 14
+      zoom: 14,
     });
     mapRef.current = map;
     map.on("load", () => setMapBusy(false));
 
-    // marker
     const pin = new maplibregl.Marker({ draggable: true })
       .setLngLat([start.lng, start.lat])
       .addTo(map);
@@ -801,9 +81,6 @@ export default function LocationSelector({ value = null, onChange }) {
     });
 
     return () => {
-      // map.remove();
-      // mapRef.current = null;
-      // pinRef.current = null;
       setOpts([]);
       setQuery("");
     };
@@ -811,92 +88,551 @@ export default function LocationSelector({ value = null, onChange }) {
 
   /* ─────────── debounced autocomplete ─────────── */
   useEffect(() => {
-    if (query.length < 3) { setOpts([]); return; }
+    if (query.length < 3) {
+      setOpts([]);
+      return;
+    }
 
     const ctrl = new AbortController();
     const t = setTimeout(() => {
       setListBusy(true);
       const p = pinRef.current?.getLngLat() || { lat: 28.6, lng: 77.2 };
       fetch(autoURL(query, p.lat, p.lng), { signal: ctrl.signal })
-        .then(r => r.json())
-        .then(d => setOpts(d.results || []))
-        .catch(() => { })
+        .then((r) => r.json())
+        .then((d) => setOpts(d.results || []))
+        .catch(() => {})
         .finally(() => setListBusy(false));
     }, 350);
 
-    return () => { clearTimeout(t); ctrl.abort(); };
+    return () => {
+      clearTimeout(t);
+      ctrl.abort();
+    };
   }, [query]);
 
-  /* ───────────────── UI ───────────────── */
+  /* ───────────────── Modern UI ───────────────── */
   return (
     <>
-      <button className="ls-field" onClick={() => setOpen(true)}>
-        {value?.address || "Select location"}
+      <style>{`
+        .location-selector-field {
+          display: flex;
+          align-items: center;
+          width: 100%;
+          padding: 16px 20px;
+          background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+          border: none;
+          border-radius: 16px;
+          color: white;
+          font-size: 16px;
+          font-weight: 500;
+          cursor: pointer;
+          transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+          box-shadow: 0 4px 20px rgba(102, 126, 234, 0.3);
+          position: relative;
+          overflow: hidden;
+        }
+        
+        .location-selector-field:hover {
+          transform: translateY(-2px);
+          box-shadow: 0 8px 30px rgba(102, 126, 234, 0.4);
+        }
+        
+        .location-selector-field:before {
+          content: '';
+          position: absolute;
+          top: 0;
+          left: 0;
+          right: 0;
+          bottom: 0;
+          background: linear-gradient(135deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0) 100%);
+          opacity: 0;
+          transition: opacity 0.3s ease;
+        }
+        
+        .location-selector-field:hover:before {
+          opacity: 1;
+        }
+        
+        .location-icon {
+          width: 24px;
+          height: 24px;
+          margin-right: 12px;
+          opacity: 0.9;
+        }
+        
+        .location-text {
+          flex: 1;
+          text-align: left;
+          white-space: nowrap;
+          overflow: hidden;
+          text-overflow: ellipsis;
+        }
+        
+        .location-arrow {
+          margin-left: 12px;
+          transition: transform 0.3s ease;
+        }
+        
+        .location-selector-field:hover .location-arrow {
+          transform: translateX(4px);
+        }
+
+        .location-modal {
+          position: fixed;
+          inset: 0;
+          background: rgba(0, 0, 0, 0.75);
+          backdrop-filter: blur(8px);
+          z-index: 1000;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          padding: 20px;
+          animation: fadeIn 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        @keyframes fadeIn {
+          from { opacity: 0; }
+          to { opacity: 1; }
+        }
+        
+        .location-modal-content {
+          background: white;
+          border-radius: 24px;
+          width: 100%;
+          max-width: 600px;
+          max-height: 90vh;
+          overflow: hidden;
+          box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+          animation: slideUp 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        @keyframes slideUp {
+          from { 
+            opacity: 0;
+            transform: translateY(60px) scale(0.95);
+          }
+          to { 
+            opacity: 1;
+            transform: translateY(0) scale(1);
+          }
+        }
+
+        .location-header {
+          background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+          padding: 24px;
+          color: white;
+        }
+        
+        .location-title {
+          font-size: 24px;
+          font-weight: 700;
+          margin: 0 0 20px 0;
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+        }
+        
+        .location-close {
+          background: rgba(255, 255, 255, 0.2);
+          border: none;
+          border-radius: 50%;
+          width: 40px;
+          height: 40px;
+          color: white;
+          font-size: 20px;
+          cursor: pointer;
+          transition: all 0.3s ease;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+        }
+        
+        .location-close:hover {
+          background: rgba(255, 255, 255, 0.3);
+          transform: scale(1.1);
+        }
+
+        .search-container {
+          position: relative;
+          margin-bottom: 16px;
+        }
+        
+        .search-input {
+          width: 100%;
+          padding: 16px 20px 16px 56px;
+          border: 2px solid rgba(255, 255, 255, 0.3);
+          border-radius: 16px;
+          background: rgba(255, 255, 255, 0.1);
+          color: white;
+          font-size: 16px;
+          transition: all 0.3s ease;
+        }
+        
+        .search-input::placeholder {
+          color: rgba(255, 255, 255, 0.7);
+        }
+        
+        .search-input:focus {
+          outline: none;
+          border-color: rgba(255, 255, 255, 0.6);
+          background: rgba(255, 255, 255, 0.2);
+          box-shadow: 0 0 0 4px rgba(255, 255, 255, 0.1);
+        }
+        
+        .search-icon {
+          position: absolute;
+          left: 20px;
+          top: 50%;
+          transform: translateY(-50%);
+          width: 20px;
+          height: 20px;
+          color: rgba(255, 255, 255, 0.7);
+        }
+        
+        .search-spinner {
+          position: absolute;
+          right: 20px;
+          top: 50%;
+          transform: translateY(-50%);
+        }
+
+        .location-actions {
+          display: flex;
+          gap: 12px;
+          flex-wrap: wrap;
+        }
+        
+        .current-location-btn {
+          background: rgba(255, 255, 255, 0.2);
+          border: 2px solid rgba(255, 255, 255, 0.3);
+          border-radius: 12px;
+          color: white;
+          padding: 12px 20px;
+          font-size: 14px;
+          font-weight: 600;
+          cursor: pointer;
+          transition: all 0.3s ease;
+          display: flex;
+          align-items: center;
+          gap: 8px;
+        }
+        
+        .current-location-btn:hover {
+          background: rgba(255, 255, 255, 0.3);
+          border-color: rgba(255, 255, 255, 0.5);
+          transform: translateY(-1px);
+        }
+
+        .suggestions {
+          background: #f8fafc;
+          max-height: 200px;
+          overflow-y: auto;
+          border-bottom: 1px solid #e2e8f0;
+        }
+        
+        .suggestion-item {
+          padding: 16px 24px;
+          cursor: pointer;
+          border-bottom: 1px solid #e2e8f0;
+          transition: all 0.2s ease;
+          display: flex;
+          align-items: center;
+          gap: 12px;
+        }
+        
+        .suggestion-item:hover {
+          background: #e2e8f0;
+          padding-left: 28px;
+        }
+        
+        .suggestion-item:last-child {
+          border-bottom: none;
+        }
+        
+        .suggestion-icon {
+          width: 16px;
+          height: 16px;
+          color: #64748b;
+          flex-shrink: 0;
+        }
+        
+        .suggestion-text {
+          color: #334155;
+          font-size: 15px;
+          line-height: 1.4;
+        }
+
+        .map-container {
+          height: 400px;
+          position: relative;
+          background: #f1f5f9;
+        }
+        
+        .map-loading {
+          position: absolute;
+          inset: 0;
+          background: rgba(248, 250, 252, 0.95);
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          gap: 12px;
+          color: #64748b;
+          font-weight: 500;
+          z-index: 10;
+        }
+        
+        .spinner {
+          width: 24px;
+          height: 24px;
+          border: 3px solid #e2e8f0;
+          border-top: 3px solid #667eea;
+          border-radius: 50%;
+          animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+          to { transform: rotate(360deg); }
+        }
+
+        .location-footer {
+          padding: 24px;
+          background: #f8fafc;
+          display: flex;
+          gap: 12px;
+          justify-content: flex-end;
+        }
+        
+        .footer-btn {
+          padding: 12px 24px;
+          border-radius: 12px;
+          font-size: 14px;
+          font-weight: 600;
+          cursor: pointer;
+          transition: all 0.3s ease;
+          border: 2px solid transparent;
+        }
+        
+        .cancel-btn {
+          background: #e2e8f0;
+          color: #64748b;
+        }
+        
+        .cancel-btn:hover {
+          background: #cbd5e1;
+          transform: translateY(-1px);
+        }
+        
+        .save-btn {
+          background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+          color: white;
+          box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+        }
+        
+        .save-btn:hover {
+          box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+          transform: translateY(-1px);
+        }
+
+        .map-credit {
+          position: absolute;
+          bottom: 8px;
+          right: 12px;
+          font-size: 10px;
+          color: rgba(100, 116, 139, 0.7);
+          background: rgba(248, 250, 252, 0.9);
+          padding: 4px 8px;
+          border-radius: 6px;
+          backdrop-filter: blur(4px);
+        }
+        
+        @media (max-width: 640px) {
+          .location-modal {
+            padding: 10px;
+          }
+          
+          .location-modal-content {
+            max-height: 95vh;
+            border-radius: 20px;
+          }
+          
+          .location-header {
+            padding: 20px;
+          }
+          
+          .location-title {
+            font-size: 20px;
+          }
+          
+          .map-container {
+            height: 300px;
+          }
+          
+          .location-actions {
+            flex-direction: column;
+          }
+        }
+      `}</style>
+
+      <button className="location-selector-field" onClick={() => setOpen(true)}>
+        <svg className="location-icon" fill="currentColor" viewBox="0 0 20 20">
+          <path
+            fillRule="evenodd"
+            d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z"
+            clipRule="evenodd"
+          />
+        </svg>
+        <span className="location-text">
+          {value?.address || "Choose your location"}
+        </span>
+        <svg
+          className="location-arrow"
+          width="16"
+          height="16"
+          fill="currentColor"
+          viewBox="0 0 16 16"
+        >
+          <path
+            fillRule="evenodd"
+            d="M4.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L10.293 8 4.646 2.354a.5.5 0 0 1 0-.708z"
+          />
+        </svg>
       </button>
 
       {open && (
-        <div className="ls-overlay" onKeyDown={e => e.key === "Escape" && setOpen(false)}>
-          {/* header */}
-          <div className="ls-header">
-            <input
-              value={query}
-              onChange={e => setQuery(e.target.value)}
-              placeholder="Search address or landmark"
-              autoFocus
-            />
-            {listBusy && <span className="ls-spin" />}
-            <button
-              className="border rounded px-3 py-2 text-xs bg-gray-100"
-              onClick={async () => {
-                try {
-                  const { latitude, longitude } = await locate();
-                  pinRef.current.setLngLat([longitude, latitude]);
-                  mapRef.current.flyTo({ center: [longitude, latitude], zoom: 16 });
-                  pushAddress(latitude, longitude);
-                } catch { alert("Location unavailable"); }
-              }}
-              title="Use current"
-            >📍Use Current Location</button>
-            <button title="Close" onClick={() => setOpen(false)}>✕</button>
-          </div>
+        <div
+          className="location-modal"
+          onKeyDown={(e) => e.key === "Escape" && setOpen(false)}
+          onClick={(e) => e.target === e.currentTarget && setOpen(false)}
+        >
+          <div className="location-modal-content">
+            <div className="location-header">
+              <div className="location-title">
+                <span>📍 Select Location</span>
+                <button
+                  className="location-close"
+                  onClick={() => setOpen(false)}
+                  title="Close"
+                >
+                  ×
+                </button>
+              </div>
 
-          {/* suggestion list */}
-          {opts.length > 0 && (
-            <ul className="ls-suggest">
-              {opts.map(o => (
-                <li key={o.place_id} onClick={() => {
-                  const { lat, lon } = o;
-                  pinRef.current.setLngLat([lon, lat]);
-                  mapRef.current.flyTo({ center: [lon, lat], zoom: 16 });
-                  pushAddress(lat, lon);
-                  setQuery(o.formatted);
-                  setOpts([]);
-                }}>
-                  {o.formatted}
-                </li>
-              ))}
-            </ul>
-          )}
+              <div className="search-container">
+                <svg
+                  className="search-icon"
+                  fill="currentColor"
+                  viewBox="0 0 20 20"
+                >
+                  <path
+                    fillRule="evenodd"
+                    d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z"
+                    clipRule="evenodd"
+                  />
+                </svg>
+                <input
+                  className="search-input"
+                  value={query}
+                  onChange={(e) => setQuery(e.target.value)}
+                  placeholder="Search for places, landmarks, or addresses..."
+                  autoFocus
+                />
+                {listBusy && <div className="search-spinner spinner" />}
+              </div>
 
-          {/* map  (≈70 vh) */}
-          <div id="ls-map" className="ls-map">
-            {mapBusy && (
-              <div className="ls-loading">
-                <span className="ls-spin" /> &nbsp;Loading map…
+              <div className="location-actions">
+                <button
+                  className="current-location-btn"
+                  onClick={async () => {
+                    try {
+                      const { latitude, longitude } = await locate();
+                      pinRef.current.setLngLat([longitude, latitude]);
+                      mapRef.current.flyTo({
+                        center: [longitude, latitude],
+                        zoom: 16,
+                      });
+                      pushAddress(latitude, longitude);
+                    } catch {
+                      alert(
+                        "Location unavailable. Please ensure location services are enabled."
+                      );
+                    }
+                  }}
+                  title="Use current location"
+                >
+                  <svg
+                    width="16"
+                    height="16"
+                    fill="currentColor"
+                    viewBox="0 0 16 16"
+                  >
+                    <path d="M8 16s6-5.686 6-10A6 6 0 0 0 2 6c0 4.314 6 10 6 10zm0-7a3 3 0 1 1 0-6 3 3 0 0 1 0 6z" />
+                  </svg>
+                  Use Current Location
+                </button>
+              </div>
+            </div>
+
+            {opts.length > 0 && (
+              <div className="suggestions">
+                {opts.map((o) => (
+                  <div
+                    key={o.place_id}
+                    className="suggestion-item"
+                    onClick={() => {
+                      const { lat, lon } = o;
+                      pinRef.current.setLngLat([lon, lat]);
+                      mapRef.current.flyTo({ center: [lon, lat], zoom: 16 });
+                      pushAddress(lat, lon);
+                      setQuery(o.formatted);
+                      setOpts([]);
+                    }}
+                  >
+                    <svg
+                      className="suggestion-icon"
+                      fill="currentColor"
+                      viewBox="0 0 20 20"
+                    >
+                      <path
+                        fillRule="evenodd"
+                        d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z"
+                        clipRule="evenodd"
+                      />
+                    </svg>
+                    <div className="suggestion-text">{o.formatted}</div>
+                  </div>
+                ))}
               </div>
             )}
-          </div>
 
-          {/* footer */}
-          <div className="ls-footer">
-            <button className="ls-save"
-              onClick={() => { setOpen(false); /* marker position already stored */ }}>
-              💾 Save changes
-            </button>
-          </div>
+            <div className="map-container">
+              <div id="ls-map" style={{ width: "100%", height: "100%" }}>
+                {mapBusy && (
+                  <div className="map-loading">
+                    <div className="spinner" />
+                    Loading interactive map...
+                  </div>
+                )}
+              </div>
+              <p className="map-credit">
+                © OpenStreetMap contributors | © Geoapify
+              </p>
+            </div>
 
-          {/* licence */}
-          <p className="ls-credit">© OpenStreetMap contributors | © Geoapify</p>
+            <div className="location-footer">
+              <button
+                className="footer-btn cancel-btn"
+                onClick={() => setOpen(false)}
+              >
+                Cancel
+              </button>
+              <button
+                className="footer-btn save-btn"
+                onClick={() => setOpen(false)}
+              >
+                💾 Save Location
+              </button>
+            </div>
+          </div>
         </div>
       )}
     </>
