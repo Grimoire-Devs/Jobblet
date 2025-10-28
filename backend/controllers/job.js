@@ -41,7 +41,7 @@ const createJob = async (req, res) => {
 
         // Build job document
         const jobPayload = {
-            createdBy: mongoose.Types.ObjectId(req.user.id),
+            createdBy: req.user.id,
             title: String(formData.title).trim(),
             description: String(formData.description).trim(),
             // Accept category as string or array

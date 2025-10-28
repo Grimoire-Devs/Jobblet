@@ -1,3 +1,4 @@
+const User = require('../models/user');
 const signup = async (req, res) => {
     const data = req.body;
     const coordinates = [
