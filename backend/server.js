@@ -15,7 +15,7 @@ app.use(cookieParser());
 
 const authRouter = require("./routes/auth");
 const userRouter = require("./routes/user");
-
+const jobRouter = require("./routes/job");
 app.use(
   cors({
     origin: "http://localhost:5173",
@@ -30,6 +30,7 @@ app.use(
 
 app.use("/auth", authRouter);
 app.use("/user", userRouter);
+app.use("/job", jobRouter);
 
 app.get("/api/health", (req, res) => {
   res.json({ status: "OK" });

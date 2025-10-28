@@ -40,13 +40,12 @@ const jobSchema = new mongoose.Schema(
     },
     description: {
       type: String,
-      reuired,
+      required: true,
     },
     category: {
       type: [
         {
           type: String,
-          enum: ALLOWED_SKILLS,
         },
       ],
     },
