@@ -195,4 +195,28 @@ const getJobDetails = async (req, res) => {
   }
 };
 
-module.exports = { createJob, searchJobs, getJobDetails };
+const getJobsByCategory = async (req, res) => {
+  try {
+    const { category } = req.params;
+
+    if (!category) {
+      return res.status(400).json({ message: "Category is required" });
+    }
+
+    const jobs = await Job.find({
+      category: { $in: [category] },
+      status: "open",
+    })
+      .sort({ createdAt: -1 })
+      .select("-active_bids -hired_worker");
+
+    return res.json({ jobs, count: jobs.length, category });
+  } catch (err) {
+    console.error("getJobsByCategory error:", err);
+    return res
+      .status(500)
+      .json({ message: err?.message || "Internal Server Error" });
+  }
+};
+
+module.exports = { createJob, searchJobs, getJobDetails, getJobsByCategory };
