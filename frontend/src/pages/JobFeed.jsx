@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, useCallback } from "react"
 import { Link, useSearchParams } from "react-router-dom"
 import { useLanguage } from "../contexts/LanguageContext"
 import { Search, Filter, MapPin, DollarSign, Clock, Star, Bookmark, Eye, ChevronDown } from "lucide-react"
@@ -31,14 +31,10 @@ const JobFeed = () => {
     { key: "gardening", label: "Gardening", icon: "🌱" },
   ]
 
-  useEffect(() => {
-    fetchJobs()
-  }, [filters])
-
-  const fetchJobs = async () => {
+  const fetchJobs = useCallback(async () => {
     setLoading(true)
 
-    // Mock data - in real app, fetch from API with filters
+    // Mock data - used as fallback when backend isn't available or returns empty
     const mockJobs = [
       {
         id: 1,
@@ -122,7 +118,69 @@ const JobFeed = () => {
       },
     ]
 
-    // Apply filters
+    // Try fetching from backend; on failure fallback to mockJobs
+    try {
+      const params = new URLSearchParams()
+      if (filters.search) params.set('search', filters.search)
+      if (filters.category) params.set('category', filters.category)
+      if (filters.minBudget) params.set('budget_min', filters.minBudget)
+      if (filters.maxBudget) params.set('budget_max', filters.maxBudget)
+      if (filters.urgency) params.set('urgency', filters.urgency)
+
+      const base = import.meta.env.VITE_BASE_URL || ''
+      const url = `${base}/job/search?${params.toString()}`
+
+      const resp = await fetch(url, { credentials: 'include' })
+      if (resp.ok) {
+        const body = await resp.json()
+        const serverJobs = Array.isArray(body.jobs) ? body.jobs : []
+
+        // Map server job shape to frontend mock shape
+        let mapped = serverJobs.map((j) => ({
+          id: j._id || j.id,
+          title: j.title,
+          category: Array.isArray(j.category) ? j.category[0] : j.category,
+          description: j.description,
+          budget: typeof j.budget === 'number' ? j.budget : Number(j.budget) || 0,
+          budgetType: j.budgetType || 'fixed',
+          location: j.address?.address || '',
+          pincode: j.address?.pincode || '',
+          urgency: j.urgency || 'normal',
+          postedAt: j.createdAt ? new Date(j.createdAt).toLocaleString() : '',
+          poster: {
+            name: j.createdBy?.name || j.postedBy?.name || 'Unknown',
+            rating: j.createdBy?.rating || 0,
+            jobsPosted: j.createdBy?.jobsPosted || 0,
+          },
+          applicants: Array.isArray(j.active_bids) ? j.active_bids.length : (j.active_bids ? 1 : 0),
+          saved: false,
+        }))
+
+        // Apply client-side sort
+        switch (filters.sortBy) {
+          case 'budget-high':
+            mapped.sort((a, b) => b.budget - a.budget)
+            break
+          case 'budget-low':
+            mapped.sort((a, b) => a.budget - b.budget)
+            break
+          case 'newest':
+          default:
+            mapped.sort((a, b) => new Date(b.postedAt) - new Date(a.postedAt))
+            break
+        }
+
+        setJobs(mapped)
+        setLoading(false)
+        return
+      }
+      // non-ok response -> fallback to mock
+      console.warn('Job search failed, falling back to mock', resp.status)
+    } catch (err) {
+      console.warn('Failed to fetch jobs from backend, using mock data', err)
+    }
+
+    // If we reached here, use mockJobs and apply client-side filters & sort
     let filteredJobs = mockJobs
 
     if (filters.search) {
@@ -151,23 +209,27 @@ const JobFeed = () => {
 
     // Sort jobs
     switch (filters.sortBy) {
-      case "budget-high":
+      case 'budget-high':
         filteredJobs.sort((a, b) => b.budget - a.budget)
         break
-      case "budget-low":
+      case 'budget-low':
         filteredJobs.sort((a, b) => a.budget - b.budget)
         break
-      case "newest":
+      case 'newest':
       default:
-        // Already sorted by newest
+        // Already sorted by newest in mock
         break
     }
 
-    setTimeout(() => {
-      setJobs(filteredJobs)
-      setLoading(false)
-    }, 500)
-  }
+    setJobs(filteredJobs)
+    setLoading(false)
+  }, [filters])
+
+  useEffect(() => {
+    fetchJobs()
+  }, [fetchJobs])
+
+  
 
   const handleFilterChange = (key, value) => {
     setFilters((prev) => ({
