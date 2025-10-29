@@ -29,84 +29,105 @@ const JobDetail = () => {
   const fetchJobDetail = async () => {
     setLoading(true)
 
-    // Mock data - in real app, fetch from API
+    const safe = (v) => {
+      if (v === undefined || v === null) return ''
+      if (typeof v === 'string') return v
+      try {
+        return JSON.stringify(v)
+      } catch {
+        return String(v)
+      }
+    }
+
+    // Try fetching job details from backend first
+    try {
+      if (!jobId) {
+        throw new Error('Missing job id')
+      }
+
+      const base = import.meta.env.VITE_BASE_URL || ''
+      const url = `${base}/job/${jobId}`
+      const resp = await fetch(url, { credentials: 'include' })
+
+      if (resp.ok) {
+        const body = await resp.json()
+        const j = body.job || body
+
+        const mapped = {
+          id: j._id || j.id,
+          title: safe(j.title),
+          category: Array.isArray(j.category) ? j.category[0] : j.category,
+          description: safe(j.description),
+          budget: typeof j.budget === 'number' ? j.budget : Number(j.budget) || 0,
+          budgetType: j.budgetType || 'fixed',
+          location: j.address?.address || '',
+          pincode: j.address?.pincode || '',
+          urgency: j.urgency || 'normal',
+          postedAt: j.createdAt ? new Date(j.createdAt).toLocaleString() : '',
+          startDate: j.start_date || j.startDate || '',
+          endDate: j.end_date || j.endDate || '',
+          timePreference: j.shift_preference || j.timePreference || '',
+          requirements: safe(j.notes ?? j.requirements),
+          poster: {
+            id: j.createdBy?._id || j.createdBy?.id || null,
+            name: j.createdBy?.name || 'Unknown',
+            rating: j.createdBy?.rating || 0,
+            jobsPosted: j.createdBy?.jobsPosted || 0,
+            memberSince: j.createdBy?.memberSince || '',
+            verified: j.createdBy?.verified || false,
+            avatar: j.createdBy?.profileImage || '/placeholder.svg',
+          },
+          applicants: Array.isArray(j.active_bids) ? j.active_bids.length : (j.active_bids ? 1 : 0),
+          saved: false,
+          applied: j.applied || false,
+        }
+
+        setJob(mapped)
+        setLoading(false)
+        return
+      }
+
+      console.warn('Failed to fetch job details, status:', resp.status)
+    } catch (err) {
+      console.warn('Error fetching job details:', err)
+    }
+
+    // Fallback to mock data if backend fails or isn't available
     const mockJob = {
       id: Number.parseInt(jobId),
-      title: "House Cleaning Service Needed",
-      category: "housekeeping",
-      description: `Looking for a reliable and experienced house cleaner for weekly cleaning of my 2BHK apartment in Bandra West. 
-
-The job includes:
-- Cleaning all rooms including bedrooms, living room, kitchen, and bathrooms
-- Dusting furniture and surfaces
-- Mopping floors
-- Cleaning windows (inside only)
-- Basic organizing
-
-Requirements:
-- Must have at least 2 years of experience in house cleaning
-- Should bring own cleaning supplies and equipment
-- Punctual and reliable
-- Good references preferred
-
-The apartment is on the 5th floor with elevator access. Parking is available for two-wheelers.`,
+      title: 'House Cleaning Service Needed',
+      category: 'housekeeping',
+      description: `Looking for a reliable and experienced house cleaner for weekly cleaning of my 2BHK apartment in Bandra West. \n\nThe job includes:\n- Cleaning all rooms including bedrooms, living room, kitchen, and bathrooms\n- Dusting furniture and surfaces\n- Mopping floors\n- Cleaning windows (inside only)\n- Basic organizing\n\nRequirements:\n- Must have at least 2 years of experience in house cleaning\n- Should bring own cleaning supplies and equipment\n- Punctual and reliable\n- Good references preferred\n\nThe apartment is on the 5th floor with elevator access. Parking is available for two-wheelers.`,
       budget: 500,
-      budgetType: "fixed",
-      location: "Bandra West, Mumbai",
-      pincode: "400050",
-      urgency: "normal",
-      postedAt: "2 hours ago",
-      startDate: "2024-01-20",
-      endDate: "",
-      timePreference: "morning",
-      requirements: "Must have own cleaning supplies, 2+ years experience",
+      budgetType: 'fixed',
+      location: 'Bandra West, Mumbai',
+      pincode: '400050',
+      urgency: 'normal',
+      postedAt: '2 hours ago',
+      startDate: '2024-01-20',
+      endDate: '',
+      timePreference: 'morning',
+      requirements: 'Must have own cleaning supplies, 2+ years experience',
       poster: {
         id: 1,
-        name: "Priya Sharma",
+        name: 'Priya Sharma',
         rating: 4.8,
         jobsPosted: 12,
-        memberSince: "2023",
+        memberSince: '2023',
         verified: true,
-        avatar: "/placeholder.svg?height=60&width=60",
+        avatar: '/placeholder.svg?height=60&width=60',
       },
       applicants: 5,
       saved: false,
       applied: false,
     }
 
+    // small delay to keep UX consistent with previous behavior
     setTimeout(() => {
       setJob(mockJob)
       setLoading(false)
-    }, 500)
+    }, 300)
   }
-
-  const handleBidSubmit = async (e) => {
-    e.preventDefault()
-    setBidSubmitting(true)
-
-    try {
-      // Simulate API call
-      await new Promise((resolve) => setTimeout(resolve, 1000))
-
-      // Update job state
-      setJob((prev) => ({
-        ...prev,
-        applied: true,
-        applicants: prev.applicants + 1,
-      }))
-
-      setShowBidModal(false)
-      setBidData({ amount: "", message: "", timeline: "" })
-
-      // Show success message (in real app, use toast notification)
-      alert("Your bid has been submitted successfully!")
-    } catch (error) {
-      alert("Failed to submit bid. Please try again.")
-    } finally {
-      setBidSubmitting(false)
-    }
-  }
-
   const toggleSaveJob = () => {
     setJob((prev) => ({
       ...prev,
