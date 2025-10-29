@@ -149,4 +149,50 @@ const searchJobs = async (req, res) => {
   }
 };
 
-module.exports = { createJob, searchJobs };
+const getJobDetails = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      return res.status(400).json({ message: "Invalid job ID" });
+    }
+
+    const job = await Job.findById(id).populate(
+      "createdBy",
+      "name email phone role profileImage address -_id"
+    );
+
+    if (!job) {
+      return res.status(404).json({ message: "Job not found" });
+    }
+
+    const jobDetails = {
+      id: job._id,
+      title: job.title,
+      description: job.description,
+      category: job.category,
+      budget: job.budget,
+      address: job.address,
+      start_date: job.start_date,
+      end_date: job.end_date,
+      urgency: job.urgency,
+      shift_preference: job.shift_preference,
+      notes: job.notes,
+      status: job.status,
+      createdAt: job.createdAt,
+      updatedAt: job.updatedAt,
+      postedBy: job.createdBy,
+      active_bids: job.active_bids,
+      hired_worker: job.hired_worker,
+    };
+
+    return res.json({ job: jobDetails });
+  } catch (err) {
+    console.error("getJobDetails error:", err);
+    return res
+      .status(500)
+      .json({ message: err?.message || "Internal Server Error" });
+  }
+};
+
+module.exports = { createJob, searchJobs, getJobDetails };
